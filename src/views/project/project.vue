@@ -21,8 +21,9 @@
       <el-col :span="13">
         <el-button
           icon="el-icon-plus"
-          size="small"
+          size="mini"
           type="primary"
+          round
           @click="dialogVisible1 = true"
         >新建项目</el-button>
         <el-button
@@ -30,6 +31,7 @@
           size="mini"
           icon="el-icon-delete"
           type="danger"
+          round
           @click="deleteFunc"
         >删除</el-button>
       </el-col>
@@ -59,12 +61,17 @@
 
     <el-table
       :data="tableData"
+      height="501px"
       style="width:100%"
       stripe
       @selection-change="handleSelectionChange"
     >
       <el-table-column align="center" sortable type="selection" width="52"/>
-      <el-table-column sortable prop="name" label="项目名称" width="130"/>
+      <el-table-column sortable prop="name" label="项目名称" width="130">
+        <template slot-scope="scope">
+          <a @click="goRouter(scope.row.project_id)">{{ scope.row.name }}</a>
+        </template>
+      </el-table-column>
       <el-table-column sortable prop="metadata.public" label="访问级别" width="140">
         <template slot-scope="scope">{{ cg(scope.row.metadata.public) }}</template>
       </el-table-column>
@@ -299,6 +306,10 @@ export default {
       } else {
         this.addFunc()
       }
+    },
+    goRouter: function(project_id) {
+      debugger
+      this.$router.push({ name: 'test', params: { projectId: project_id }})
     }
   }
 }

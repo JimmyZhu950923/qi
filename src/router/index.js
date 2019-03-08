@@ -73,7 +73,7 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/',
+    path: '/center',
     component: Layout,
     children: [
       {
@@ -81,6 +81,13 @@ export const constantRouterMap = [
         name: 'project',
         component: () => import('@/views/project/project'),
         meta: { title: '镜像中心', icon: 'respository' }
+      },
+      {
+        path: 'test',
+        name: 'test',
+        component: () => import('@/views/project/test'),
+        meta: { title: 'test', icon: 'test' },
+        hidden: true
       }
     ]
   },
