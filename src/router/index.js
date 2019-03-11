@@ -66,7 +66,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'Form',
+        name: 'Formc',
         component: () => import('@/views/form/index'),
         meta: { title: 'Form', icon: 'form' }
       }
@@ -138,6 +138,19 @@ export const constantRouterMap = [
         path: 'menu2',
         component: () => import('@/views/nested/menu2/index'),
         meta: { title: 'menu2' }
+      }
+    ]
+  },
+
+  {
+    path: '/tag',
+    component: Layout,
+    children: [
+      {
+        path: 'tag',
+        name: 'Tag',
+        component: () => import('@/views/tag/list'),
+        meta: { title: 'Tag', icon: 'tag' }
       }
     ]
   },
