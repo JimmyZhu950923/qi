@@ -103,7 +103,6 @@
 </template>
 
 <script>
-import $ from 'jquery'
 import { findLabels } from '@/api/tag'
 import { all } from '@/api/tag'
 import { remove } from '@/api/tag'
@@ -171,9 +170,9 @@ export default {
     },
     deleteFunc: function() {
       const _this = this
-      var ps = _this.sels
-      console.log(ps)
-      $.each(ps, function() {
+      var ts = _this.sels
+      console.log(ts)
+      ts.forEach((item) => {
         console.log(this.name)
         _this.SingleDelFunc(this.name)
       })
