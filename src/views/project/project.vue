@@ -127,7 +127,6 @@
   </div>
 </template>
 <script>
-import $ from 'jquery'
 import { getProjects, addProject, deleteProject, changeProject } from '@/api/project'
 export default {
   data() {
@@ -204,9 +203,10 @@ export default {
         .then(() => {
           const _this = this
           var ps = _this.multipleSelection
-          $.each(ps, function() {
-            console.log(this.project_id)
-            _this.SingleDelFunc(this.project_id)
+          debugger
+          ps.forEach((item) => {
+            console.log(item.project_id)
+            _this.SingleDelFunc(item.project_id)
           })
           this.$message({
             type: 'success',
