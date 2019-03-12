@@ -72,7 +72,25 @@ export const constantRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/center',
+    component: Layout,
+    children: [
+      {
+        path: 'project',
+        name: 'project',
+        component: () => import('@/views/project/project'),
+        meta: { title: '镜像中心', icon: 'respository' }
+      },
+      {
+        path: 'test',
+        name: 'test',
+        component: () => import('@/views/project/test'),
+        meta: { title: 'test', icon: 'test' },
+        hidden: true
+      }
+    ]
+  },
   {
     path: '/nested',
     component: Layout,

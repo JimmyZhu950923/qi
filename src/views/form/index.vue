@@ -1,4 +1,5 @@
 <template>
+
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="120px">
       <el-form-item label="Activity name">
