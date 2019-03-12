@@ -159,6 +159,19 @@ export const constantRouterMap = [
       }
     ]
   },
+  {
+    path: '/Repo',
+    component: Layout,
+    children: [
+      {
+        path: 'repositories',
+        name: 'Repositories',
+        component: () => import('@/views/repositories/repositories'),
+        meta: { title: '镜像中心', icon: 'repositories' }
+      }
+
+    ]
+  },
 
   { path: '*', redirect: '/404', hidden: true }
 ]
@@ -168,3 +181,4 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
+
