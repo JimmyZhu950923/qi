@@ -274,7 +274,8 @@ export default {
     // 查询所有
     selectLabelFunc() {
       const _this = this
-      var params = { name: this.name2 }
+      var projectId = this.$route.params.projectId
+      var params = { name: this.name2, project_id: projectId }
       getLabels(params).then(respones => {
         _this.tableData2 = respones.json
         for (var i = 0; i < _this.tableData2.length; i++) {
@@ -338,9 +339,10 @@ export default {
     // 镜像仓库
     selectFunc() {
       const _this = this
+      var projectId = this.$route.params.projectId
       this.currentPage1 = 1
       this.page = 1
-      var params = { page: this.page, page_size: this.page_size, q: this.name1 }
+      var params = { page: this.page, page_size: this.page_size, q: this.name1, project_id: projectId }
       getRepositories(params).then(response => {
         _this.tableData1 = response.result
         _this.total = response.total
