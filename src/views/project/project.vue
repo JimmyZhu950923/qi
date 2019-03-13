@@ -309,7 +309,7 @@ export default {
     },
     goRouter: function(project_id) {
       debugger
-      this.$router.push({ name: 'test', params: { projectId: project_id }})
+      this.$router.push({ name: 'Repositories', params: { projectId: project_id }})
     }
   }
 }
