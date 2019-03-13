@@ -162,12 +162,14 @@ export const constantRouterMap = [
   {
     path: '/Repo',
     component: Layout,
+    // hidden: true,
     children: [
       {
-        path: 'repositories',
+        path: 'repositories/:projectId',
         name: 'Repositories',
         component: () => import('@/views/repositories/repositories'),
-        meta: { title: '镜像中心', icon: 'repositories' }
+        meta: { title: '镜像中心', icon: 'repositories' },
+        hidden: true
       }
 
     ]
