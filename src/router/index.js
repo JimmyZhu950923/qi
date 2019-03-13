@@ -66,7 +66,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'Formc',
+        name: 'Form',
         component: () => import('@/views/form/index'),
         meta: { title: 'Form', icon: 'form' }
       }
@@ -149,7 +149,7 @@ export const constantRouterMap = [
       {
         path: 'tag',
         name: 'Tag',
-        component: () => import('@/views/tag/list'),
+        component: () => import('@/views/tag/index'),
         meta: { title: 'Tag', icon: 'tag' }
       }
     ]
