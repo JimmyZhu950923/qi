@@ -397,6 +397,8 @@ export default {
       if (val.length !== 0) {
         this.sels2 = val
         this.updateformLabelAlign = this.sels2[0]
+      } else {
+        this.sels2 = []
       }
     },
     handleSizeChange(val) {
