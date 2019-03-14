@@ -31,7 +31,11 @@
               @selection-change="selectionChange1"
             >
               <el-table-column type="selection" width="100"/>
-              <el-table-column prop="name" label="名称" width="350" sortable/>
+              <el-table-column prop="name" label="名称" width="350" sortable>
+                <template slot-scope="scope">
+                  <a @click="goTag(project_id,scope.row.name)">{{ scope.row.name }}</a>
+                </template>
+              </el-table-column>
               <el-table-column prop="tags_count" label="标签数" width="250" sortable/>
               <el-table-column prop="pull_count" label="下载数" width="250" sortable/>
             </el-table>
@@ -263,7 +267,8 @@ export default {
       page: 0,
       page_size: 15,
       total: 0,
-      total_label: 0
+      total_label: 0,
+      project_id: 0
     }
   },
   created() {
@@ -275,6 +280,7 @@ export default {
     selectLabelFunc() {
       const _this = this
       var projectId = this.$route.params.projectId
+      this.project_id = projectId
       var params = { name: this.name2, project_id: projectId }
       getLabels(params).then(respones => {
         _this.tableData2 = respones.json
@@ -397,6 +403,8 @@ export default {
       if (val.length !== 0) {
         this.sels2 = val
         this.updateformLabelAlign = this.sels2[0]
+      } else {
+        this.sels2 = []
       }
     },
     handleSizeChange(val) {
@@ -409,7 +417,12 @@ export default {
     nameChange2: function() {
       console.log(this.name2)
       this.selectLabelFunc()
+    },
+    goTag(project_id, repo_name) {
+      debugger
+      this.$router.push({ name: 'Tag', params: { projectId: project_id, repo_name: repo_name }})
     }
+
   }
 }
 </script>
