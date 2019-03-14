@@ -175,7 +175,7 @@ export const constantRouterMap = [
         path: 'repositories/:projectId',
         name: 'Repositories',
         component: () => import('@/views/repositories/repositories'),
-        meta: { title: '镜像中心', icon: 'repositories' },
+        meta: { title: '镜像仓库', icon: 'repositories' },
         hidden: true
       }
 

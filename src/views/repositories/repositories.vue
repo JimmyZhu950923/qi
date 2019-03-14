@@ -7,7 +7,7 @@
             <el-row>
               <el-col :span="18">
                 <el-button type="primary" round size="mini" @click="selectFunc">查询</el-button>
-                <el-button :disabled="sels1.length==0" size="mini" type="danger" round @click="deleteFunc">删除</el-button>
+                <el-button :disabled="sels1.length !=1" size="mini" type="danger" round @click="deleteFunc">删除</el-button>
               </el-col>
               <el-col :span="4">
                 <el-input
@@ -58,7 +58,7 @@
                 <el-button class="button" type="primary" size="mini" round @click="selectLabelFunc">查询</el-button>
                 <el-button class="button" type="info" size="mini" round @click="dialogVisible=true">添加</el-button>
                 <el-button
-                  :disabled="sels2.length==0"
+                  :disabled="sels2.length!=1"
                   class="button"
                   type="warning"
                   size="mini"
@@ -66,7 +66,7 @@
                   @click="update=true"
                 >修改</el-button>
                 <el-button
-                  :disabled="sels2.length==0"
+                  :disabled="sels2.length!=1"
                   class="button"
                   type="danger"
                   size="mini"
