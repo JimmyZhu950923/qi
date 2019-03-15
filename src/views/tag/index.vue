@@ -21,7 +21,7 @@
             :disabled="sels.length == 0"
             type="danger"
             icon="el-icon-delete"
-            @click="SingleDelFunc"
+            @click="deleteFunc"
           >删除</el-button>
         </el-col>
         <el-col :span="3">
@@ -126,11 +126,12 @@ export default {
         size: 0
       },
       options: [],
-      value5: [],
+      // value5: [],
       stripe: true,
       pageSize: 5,
       currentPage: 1,
-      countPage: 0
+      countPage: 0,
+      repoName: ''
     }
   },
   created() {
@@ -138,19 +139,19 @@ export default {
   },
   methods: {
     labelsFunc: function() {
+      debugger
       const _this = this
-      findLabels(this.listQuery).then(response => {
+      var projectId = this.$route.params.projectId
+      this.projectId = projectId
+      findLabels(this.projectId).then(response => {
         _this.options = response.result
       })
     },
     selectFunc: function() {
       const _this = this
-      var data = {
-        current_page: _this.countPage,
-        page_size: _this.pageSize,
-        page: _this.currentPage
-      }
-      all(data).then(response => {
+      var repoName = this.$route.params.repoName
+      this.repoName = repoName
+      all(this.repoName).then(response => {
         _this.tableData = response.result
         console.log(_this.tableData)
         _this.countPage = response.result.length
@@ -162,25 +163,29 @@ export default {
       this.dialogVisible = false
     },
     handleSelectionChange: function(val) {
+      // debugger
       if (val != null) {
         this.sels = val
         console.log(this.sels)
-        this.value5 = val[0].labels
+        // this.value5 = val[0].labels
       }
     },
     deleteFunc: function() {
+      debugger
       const _this = this
       var ts = _this.sels
       console.log(ts)
       ts.forEach((item) => {
-        console.log(this.name)
-        _this.SingleDelFunc(this.name)
+        console.log(item)
+        _this.SingleDelFunc(item.name)
       })
     },
     SingleDelFunc: function(name) {
+      debugger
       const _this = this
-      var data = _this.sels
-      remove(data).then(response => {
+      var repoName = this.$route.params.repoName
+      this.repoName = repoName
+      remove(this.repoName, name).then(response => {
         _this.selectFunc()
       })
     },
@@ -226,15 +231,20 @@ export default {
       return times
     },
     remove: function(label_id, tag_name) {
+      debugger
       const _this = this
-      minus(label_id, tag_name).then(response => {
+      var repoName = this.$route.params.repoName
+      this.repoName = repoName
+      minus(label_id, tag_name, this.repoName).then(response => {
         _this.selectFunc()
       })
     },
     add: function(label_id, tag_name) {
       debugger
       const _this = this
-      add(label_id, tag_name).then(response => {
+      var repoName = this.$route.params.repoName
+      this.repoName = repoName
+      add(label_id, tag_name, this.repoName).then(response => {
         _this.selectFunc()
       })
     },
