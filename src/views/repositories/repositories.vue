@@ -321,6 +321,7 @@ export default {
       var params = this.formLabelAlign
       insertLabel(params).then(response => {
         _this.selectLabelFunc()
+        this.formLabelAlign = {}
       })
     },
     updateLabel() {
