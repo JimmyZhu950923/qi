@@ -145,9 +145,10 @@ export const constantRouterMap = [
   {
     path: '/tag',
     component: Layout,
+    hidden: true,
     children: [
       {
-        path: 'tag',
+        path: 'tag/:projectId/:repoName',
         name: 'Tag',
         component: () => import('@/views/tag/index'),
         meta: { title: 'Tag', icon: 'tag' }
