@@ -1,7 +1,7 @@
 <template>
   <div class="node">
     <el-container>
-      <el-main>
+      <el-main v-loading="loading">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="主机" name="first">
             <el-row>
@@ -120,7 +120,8 @@ export default {
       activeName: 'first',
       tableData: [],
       name1: '',
-      str: '请SSH登录主机执行如下命令:</br>curl 10.10.17.111:8080/initcluster.sh | sh - -i C-2342id -arch arm64'
+      str: '请SSH登录主机执行如下命令:</br>curl 10.10.17.111:8080/initcluster.sh | sh - -i C-2342id -arch arm64',
+      loading: true
     }
   },
   created() {
@@ -135,6 +136,7 @@ export default {
       getNodes().then(response => {
         // debugger
         _this.tableData = response.data.items
+        _this.loading = false
       })
     },
     getColor(bol) {

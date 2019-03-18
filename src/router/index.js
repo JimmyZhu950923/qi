@@ -156,6 +156,19 @@ export const constantRouterMap = [
     ]
   },
 
+  // {
+  //   path: '/service',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'service',
+  //       name: 'Service',
+  //       component: () => import('@/views/service/index'),
+  //       meta: { title: 'Service', icon: 'server' }
+  //     }
+  //   ]
+  // },
+
   {
     path: 'external-link',
     component: Layout,
