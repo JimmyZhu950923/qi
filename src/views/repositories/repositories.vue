@@ -5,9 +5,25 @@
         <el-tabs v-model="activeName">
           <el-tab-pane label="镜像仓库" name="first">
             <el-row>
-              <el-col :span="18">
+              <el-col :span="14">
                 <el-button type="primary" round size="mini" @click="selectFunc">查询</el-button>
                 <el-button :disabled="sels1.length !=1" size="mini" type="danger" round @click="deleteFunc">删除</el-button>
+              </el-col>
+              <el-col :span="2" :offset="2">
+                <el-popover
+                  placement="bottom"
+                  trigger="click">
+                  <h3>推送镜像
+                    <el-tooltip class="item" effect="dark" content="推送一个镜像到当前项目的参考命令。" placement="top-start">
+                      <i class="el-icon-warning"/>
+                    </el-tooltip>
+                  </h3>
+                  <div>在项目中标记镜像：</div>
+                  <p><b>docker tag SOURCE_IMAGE[:TAG] kube.gwunion.cn/{{ proName }}/IMAGE[:TAG]</b></p>
+                  <div>推送镜像到当前项目：</div>
+                  <p><b>docker push kube.gwunion.cn/{{ proName }}/IMAGE[:TAG]</b></p>
+                  <el-button slot="reference" size="mini" round>推送镜像</el-button>
+                </el-popover>
               </el-col>
               <el-col :span="4">
                 <el-input
@@ -30,14 +46,14 @@
 
               @selection-change="selectionChange1"
             >
-              <el-table-column type="selection" width="100"/>
-              <el-table-column prop="name" label="名称" width="350" sortable>
+              <el-table-column type="selection" width="80"/>
+              <el-table-column prop="name" label="名称" sortable>
                 <template slot-scope="scope">
                   <a @click="goTag(project_id,scope.row.name)">{{ scope.row.name }}</a>
                 </template>
               </el-table-column>
-              <el-table-column prop="tags_count" label="标签数" width="250" sortable/>
-              <el-table-column prop="pull_count" label="下载数" width="250" sortable/>
+              <el-table-column prop="tags_count" label="标签数" sortable/>
+              <el-table-column prop="pull_count" label="下载数" sortable/>
             </el-table>
             <div class="block">
               <el-pagination
@@ -150,8 +166,8 @@
                 @selection-change="selectionChange2"
               >
                 <el-table-column type="selection" width="80"/>
-                <el-table-column prop="id" label="编号" width="150" sortable/>
-                <el-table-column prop="color" label="标签" width="250" sortable>
+                <el-table-column prop="id" label="编号" sortable/>
+                <el-table-column prop="color" label="标签" sortable>
                   <template slot-scope="scope">
                     <el-tag
                       :color="scope.row.color"
@@ -160,8 +176,8 @@
                     > {{ scope.row.name }} </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="description" label="描述" width="250" sortable/>
-                <el-table-column prop="creation_time" label="创建时间" width="250" sortable/>
+                <el-table-column prop="description" label="描述" sortable/>
+                <el-table-column prop="creation_time" label="创建时间" sortable/>
               </el-table>
               <div class="block">
                 <el-pagination :total="total_label" layout="total"/>
@@ -173,7 +189,7 @@
   </div>
 </template>
 <script>
-import { getRepositories, deleteRepositories, pageChange } from '@/api/repositories'
+import { getRepositories, deleteRepositories, pageChange, getProject } from '@/api/repositories'
 import { getLabels, getLabelById, insertLabel, updateLabel, deleteLabel } from '@/api/label'
 export default {
   name: 'Repositories',
@@ -268,14 +284,25 @@ export default {
       page_size: 15,
       total: 0,
       total_label: 0,
-      project_id: 0
+      project_id: 0,
+      proName: ''
     }
   },
   created() {
     this.selectFunc()
     this.selectLabelFunc()
+    this.getProjectName()
   },
   methods: {
+    // id查询项目
+    getProjectName() {
+      debugger
+      const _this = this
+      var id = this.project_id
+      getProject(id).then(response => {
+        _this.proName = response.data.name
+      })
+    },
     // 查询所有
     selectLabelFunc() {
       const _this = this
