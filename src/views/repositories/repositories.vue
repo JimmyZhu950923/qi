@@ -418,9 +418,9 @@ export default {
       console.log(this.name2)
       this.selectLabelFunc()
     },
-    goTag(project_id, repo_name) {
+    goTag(projectId, repoName) {
       debugger
-      this.$router.push({ name: 'Tag', params: { projectId: project_id, repo_name: repo_name }})
+      this.$router.push({ name: 'Tag', params: { pojrectId: projectId, repoName: repoName }})
     }
 
   }
