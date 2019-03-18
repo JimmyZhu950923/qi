@@ -80,7 +80,7 @@
               {{ scope.row.labels[0].name }}
             </el-tag>
             <el-popover placement="bottom" width="150px" trigger="click">
-              <span v-for="label in scope.row.labels" :key="label">
+              <span v-for="label in scope.row.labels" :key="label.repoName">
                 <el-tag :color="label.color" size="small" style="border-radius:20px;">
                   <i class="el-icon-share"/>
                   {{ label.name }}
