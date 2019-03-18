@@ -169,14 +169,34 @@ export const constantRouterMap = [
   {
     path: '/Repo',
     component: Layout,
-    // hidden: true,
+    hidden: true,
     children: [
       {
         path: 'repositories/:projectId',
         name: 'Repositories',
         component: () => import('@/views/repositories/repositories'),
-        meta: { title: '镜像中心', icon: 'repositories' },
-        hidden: true
+        meta: { title: '镜像仓库', icon: 'repositories' }
+        // hidden: true
+      }
+
+    ]
+  },
+  {
+    path: '/node',
+    component: Layout,
+    // hidden: true,
+    children: [
+      {
+        path: 'node',
+        name: 'Node',
+        component: () => import('@/views/node/index'),
+        meta: { title: '集群', icon: 'repositories' }
+      },
+      {
+        path: 'showNode/:nodeName',
+        name: 'ShowNode',
+        hidden: true,
+        component: () => import('@/views/node/showNode')
       }
 
     ]
