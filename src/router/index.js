@@ -73,6 +73,18 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/pod',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Pod',
+        component: () => import('@/views/pod/index'),
+        meta: { title: 'Pod', icon: 'pods' }
+      }
+    ]
+  },
+  {
     path: '/center',
     component: Layout,
     children: [

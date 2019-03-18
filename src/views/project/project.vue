@@ -297,7 +297,6 @@ export default {
       this.selectFunc()
     },
     nameChange: function() {
-      console.log(this.name)
       this.selectFunc()
     },
     enterFunc: function(event) {
