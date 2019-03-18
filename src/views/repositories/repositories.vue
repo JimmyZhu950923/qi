@@ -365,7 +365,7 @@ export default {
     },
     CurrentChange(val) {
       this.page = val
-      console.log(`当前页: ${val}`)
+      // console.log(`当前页: ${val}`)
       const _this = this
       var params = { page: this.page, page_size: this.page_size }
       pageChange(params).then(response => {
@@ -412,15 +412,14 @@ export default {
       console.log(`每页 ${val} 条`)
     },
     nameChange1: function() {
-      console.log(this.name1)
+      // console.log(this.name1)
       this.selectFunc()
     },
     nameChange2: function() {
-      console.log(this.name2)
+      // console.log(this.name2)
       this.selectLabelFunc()
     },
     goTag(projectId, repoName) {
-      debugger
       this.$router.push({ name: 'Tag', params: { pojrectId: projectId, repoName: repoName }})
     }
 
