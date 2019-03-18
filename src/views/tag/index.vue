@@ -135,6 +135,7 @@ export default {
     }
   },
   created() {
+    this.selectFunc()
     this.labelsFunc()
   },
   methods: {
