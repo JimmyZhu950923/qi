@@ -24,14 +24,23 @@
         </el-form>
       </el-dialog>
       <el-row>
-        <el-col :span="4">
-          <el-button type="primary" round @click="dialogVisible = true">&nbsp;&nbsp;&nbsp;新建&nbsp;&nbsp;&nbsp;</el-button>
+        <el-col :span="3">
+          <el-button type="primary" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;&nbsp;新建&nbsp;&nbsp;&nbsp;</el-button>
         </el-col>
         <el-col :span="3">
-          <el-button icon="el-icon-refresh" type="success" round @click="getAllServices">刷新</el-button>
+          <el-button
+            :disabled="sels.length == 0"
+            type="danger"
+            icon="el-icon-delete"
+            round
+            @click="delService"
+          >&nbsp;&nbsp;&nbsp;删除&nbsp;&nbsp;&nbsp;</el-button>
         </el-col>
-        <el-col :span="100" style="margin-left: 600px">
-          <el-button round @click="clearFilter">清除所有过滤器</el-button>
+        <el-col :span="3">
+          <el-button icon="el-icon-refresh" type="success" round @click="getAllServices">&nbsp;&nbsp;&nbsp;刷新&nbsp;&nbsp;&nbsp;</el-button>
+        </el-col>
+        <el-col :span="10">
+          <el-button icon="el-icon-remove" round @click="clearFilter">清除所有过滤器</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -42,7 +51,9 @@
         stripe
         style="width: 100%"
         highlight-current-row
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column type="selection" width="40"/>
         <el-table-column prop="metadata.name" label="名称" sortable width="280"/>
         <el-table-column :filters="[{text: '集群IP', value: 'ClusterIP'}, {text: '节点端口', value: 'NodePort'}]" :filter-method="filterTag" prop="spec.type" label="服务类型" sortable width="220" column-key="spec.type">
           <template slot-scope="s">
@@ -65,6 +76,7 @@
 <script>
 import { getServices } from '@/api/service'
 import { addServices } from '@/api/service'
+import { remove } from '@/api/service'
 export default {
   data() {
     return {
@@ -100,10 +112,8 @@ export default {
       })
     },
     newService: function() {
-      debugger
       const _this = this
       var data = this.selForm.metadata.name
-      console.log(data)
       addServices(data).then(response => {
         _this.$message({
           type: 'success',
@@ -113,6 +123,33 @@ export default {
         _this.selForm.metadata.name = ''
         _this.getAllServices()
       })
+    },
+    delService: function() {
+      debugger
+      const _this = this
+      var ts = _this.sels
+      console.log(ts)
+      ts.forEach((item) => {
+        console.log(item)
+        _this.SingleDelFunc(item.metadata.name)
+      })
+    },
+    SingleDelFunc: function(name) {
+      debugger
+      const _this = this
+      remove(name).then(response => {
+        _this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+        _this.getAllServices()
+      })
+    },
+    handleSelectionChange: function(val) {
+      if (val != null) {
+        this.sels = val
+        console.log(this.sels)
+      }
     },
     clearFilter: function() {
       this.$refs.filterTable.clearFilter()
