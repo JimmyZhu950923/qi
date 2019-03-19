@@ -1,7 +1,7 @@
 <template>
   <div class="Repositories">
     <el-container>
-      <el-main>
+      <el-main v-loading="loading">
         <el-tabs v-model="activeName">
           <el-tab-pane label="镜像仓库" name="first">
             <el-row>
@@ -15,14 +15,14 @@
                   trigger="click">
                   <h3>推送镜像
                     <el-tooltip class="item" effect="dark" content="推送一个镜像到当前项目的参考命令。" placement="top-start">
-                      <i class="el-icon-warning"/>
+                      <el-button size="mini" type="text"><i class="el-icon-warning"/></el-button>
                     </el-tooltip>
                   </h3>
                   <div>在项目中标记镜像：</div>
                   <p><b>docker tag SOURCE_IMAGE[:TAG] kube.gwunion.cn/{{ proName }}/IMAGE[:TAG]</b></p>
                   <div>推送镜像到当前项目：</div>
                   <p><b>docker push kube.gwunion.cn/{{ proName }}/IMAGE[:TAG]</b></p>
-                  <el-button slot="reference" size="mini" round>推送镜像</el-button>
+                  <el-button slot="reference" size="mini" type="text" round>推送镜像</el-button>
                 </el-popover>
               </el-col>
               <el-col :span="4">
@@ -173,7 +173,7 @@
                       :color="scope.row.color"
                       size="mini"
                       style="font-weight:900;font-size:13px;color: white;border-radius: 20px;"
-                    > {{ scope.row.name }} </el-tag>
+                    > <i class="el-icon-share"/>{{ scope.row.name }} </el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="description" label="描述" sortable/>
@@ -285,7 +285,8 @@ export default {
       total: 0,
       total_label: 0,
       project_id: 0,
-      proName: ''
+      proName: '',
+      loading: true
     }
   },
   created() {
@@ -315,6 +316,7 @@ export default {
           var str = _this.tableData2[i].creation_time
           var date = _this.time(str)
           _this.tableData2[i].creation_time = date
+          _this.loading = false
         }
         _this.total_label = respones.total
       })
@@ -372,6 +374,7 @@ export default {
     },
     // 镜像仓库
     selectFunc() {
+      // debugger
       const _this = this
       var projectId = this.$route.params.projectId
       this.currentPage1 = 1
@@ -380,6 +383,7 @@ export default {
       getRepositories(params).then(response => {
         _this.tableData1 = response.result
         _this.total = response.total
+        _this.loading = false
       })
     },
 

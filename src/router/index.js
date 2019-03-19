@@ -156,18 +156,18 @@ export const constantRouterMap = [
     ]
   },
 
-  {
-    path: '/service',
-    component: Layout,
-    children: [
-      {
-        path: 'service',
-        name: 'Service',
-        component: () => import('@/views/service/index'),
-        meta: { title: 'Service', icon: 'server' }
-      }
-    ]
-  },
+  // {
+  //   path: '/service',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'service',
+  //       name: 'Service',
+  //       component: () => import('@/views/service/index'),
+  //       meta: { title: 'Service', icon: 'server' }
+  //     }
+  //   ]
+  // },
 
   {
     path: 'external-link',
@@ -214,7 +214,27 @@ export const constantRouterMap = [
 
     ]
   },
+  {
+    path: '/systemSetting',
+    component: Layout,
+    // hidden: true,
+    meta: { title: '系统管理', icon: 'setting' },
+    children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/systemSetting/user'),
+        meta: { title: '用户管理' }
+      },
+      {
+        path: 'setting',
+        name: 'Setting',
+        component: () => import('@/views/systemSetting/setting'),
+        meta: { title: '系统设置' }
+      }
 
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
