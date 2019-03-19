@@ -374,6 +374,7 @@ export default {
     },
     // 镜像仓库
     selectFunc() {
+      // debugger
       const _this = this
       var projectId = this.$route.params.projectId
       this.currentPage1 = 1
@@ -382,6 +383,7 @@ export default {
       getRepositories(params).then(response => {
         _this.tableData1 = response.result
         _this.total = response.total
+        _this.loading = false
       })
     },
 
