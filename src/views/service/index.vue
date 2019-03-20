@@ -5,17 +5,14 @@
         <hr >
         <el-form :model="selForm" label-width="80px">
           <el-form-item label="服务名称">
-            <el-input v-model="selForm.metadata.name" class="searchClass" round/>
+            <el-input v-model="selForm.name" class="searchClass" round/>
           </el-form-item>
-          <!-- <el-form-item label="部署组">
-            <el-input v-model="selForm.deployGroup" class="searchClass" round/>
+          <el-form-item label="命名空间">
+            <el-input v-model="selForm.namespace" class="searchClass" round/>
           </el-form-item>
-          <el-form-item label="服务类型">
-            <el-radio-group v-model="selForm.stype">
-              <el-radio :label="1">内部服务</el-radio>
-              <el-radio :label="2">外部服务</el-radio>
-            </el-radio-group>
-          </el-form-item> -->
+          <el-form-item label="Port">
+            <el-input v-model="selForm.port" class="searchClass" round/>
+          </el-form-item>
           <hr >
           <el-form-item>
             <el-button size="small" icon="el-icon-close" round @click="dialogVisible = false">取消</el-button>
@@ -25,7 +22,7 @@
       </el-dialog>
       <el-row>
         <el-col :span="3">
-          <el-button type="primary" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;&nbsp;新建&nbsp;&nbsp;&nbsp;</el-button>
+          <el-button type="primary" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
         </el-col>
         <el-col :span="3">
           <el-button
@@ -34,19 +31,25 @@
             icon="el-icon-delete"
             round
             @click="delService"
-          >&nbsp;&nbsp;&nbsp;删除&nbsp;&nbsp;&nbsp;</el-button>
+          >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
         </el-col>
-        <el-col :span="3">
-          <el-button icon="el-icon-refresh" type="success" round @click="getAllServices">&nbsp;&nbsp;&nbsp;刷新&nbsp;&nbsp;&nbsp;</el-button>
+        <el-col :span="4" style="margin-left:550px">
+          <el-select v-model="plc" size="small" placeholder="请选择" @change="selchangeFunc">
+            <el-option
+              v-for="item in options"
+              :key="item.value1"
+              :label="item.label"
+              :value="item.value1"
+            />
+          </el-select>
         </el-col>
-        <el-col :span="10">
-          <el-button icon="el-icon-remove" round @click="clearFilter">清除所有过滤器</el-button>
+        <el-col :span="1" style="margin-left:10px">
+          <el-button size="small" icon="el-icon-refresh" circle @click="rr"/>
         </el-col>
       </el-row>
     </el-header>
     <el-main>
       <el-table
-        ref="filterTable"
         :data="tableData"
         stripe
         style="width: 100%"
@@ -55,13 +58,13 @@
       >
         <el-table-column type="selection" width="40"/>
         <el-table-column prop="metadata.name" label="名称" sortable width="280"/>
-        <el-table-column :filters="[{text: '集群IP', value: 'ClusterIP'}, {text: '节点端口', value: 'NodePort'}]" :filter-method="filterTag" prop="spec.type" label="服务类型" sortable width="220" column-key="spec.type">
+        <el-table-column prop="spec.type" label="服务类型" sortable width="220">
           <template slot-scope="s">
             {{ rag(s.row.spec.type) }}
           </template>
         </el-table-column>
         <el-table-column prop="spec.clusterIP" label="端点" sortable width="320"/>
-        <el-table-column :filters="[{text: 'default', value: 'default'}, {text: 'ingress-nginx', value: 'ingress-nginx'}, {text: 'kube-system', value: 'kube-system'}]" :filter-method="filterHandler" prop="metadata.namespace" label="命名空间" sortable width="258" column-key="metadata.namespace" />
+        <el-table-column prop="metadata.namespace" label="命名空间" sortable width="258"/>
       </el-table>
       <el-pagination
         :current-page="currentPage"
@@ -80,16 +83,41 @@ import { remove } from '@/api/service'
 export default {
   data() {
     return {
+      plc: null,
       dialogVisible: false,
-      // radio: 1,
       tableData: [],
       sels: [],
       input: '',
+      selection: true,
       selForm: {
         metadata: {
-          name: ''
+          name: '',
+          namespace: ''
+        },
+        spec: {
+          ports: [{
+            port: 0
+          }]
         }
       },
+      options: [
+        {
+          value1: null,
+          label: '所有项目'
+        },
+        {
+          value1: 'default',
+          label: 'default'
+        },
+        {
+          value1: 'ingress-nginx',
+          label: 'ingress-nginx'
+        },
+        {
+          value1: 'kube-system',
+          label: 'kube-system'
+        }
+      ],
       stripe: true,
       value: '',
       pageSize: 20,
@@ -102,25 +130,32 @@ export default {
   },
   methods: {
     getAllServices: function() {
+      // debugger
       const _this = this
       var data = {
-        namespace: ''
+        namespace: _this.plc
       }
       getServices(data).then(response => {
+        console.log(response)
         _this.tableData = response.data.items
         _this.countPage = response.data.items.length
       })
     },
     newService: function() {
+      debugger
       const _this = this
-      var data = this.selForm.metadata.name
-      addServices(data).then(response => {
+      var name = this.selForm.name
+      var namespace = this.selForm.namespace
+      var port = this.selForm.port
+      addServices(name, namespace, port).then(response => {
         _this.$message({
           type: 'success',
           message: '新建成功!'
         })
         _this.dialogVisible = false
-        _this.selForm.metadata.name = ''
+        _this.selForm.name = ''
+        _this.selForm.namespace = ''
+        _this.selForm.port = 0
         _this.getAllServices()
       })
     },
@@ -131,13 +166,13 @@ export default {
       console.log(ts)
       ts.forEach((item) => {
         console.log(item)
-        _this.SingleDelFunc(item.metadata.name)
+        _this.SingleDelFunc(item.metadata.name, item.metadata.namespace)
       })
     },
-    SingleDelFunc: function(name) {
+    SingleDelFunc: function(name, namespace) {
       debugger
       const _this = this
-      remove(name).then(response => {
+      remove(name, namespace).then(response => {
         _this.$message({
           type: 'success',
           message: '删除成功!'
@@ -151,14 +186,19 @@ export default {
         console.log(this.sels)
       }
     },
-    clearFilter: function() {
-      this.$refs.filterTable.clearFilter()
+    selchangeFunc: function() {
+      debugger
+      this.getAllServices()
     },
-    filterTag: function(value, row) {
-      return row.spec.type === value
+    nameChange: function() {
+      debugger
+      console.log(this.name)
+      this.getAllServices()
     },
-    filterHandler: function(value, row) {
-      return row.metadata.namespace === value
+    rr: function() {
+      this.plc = null
+      this.name = null
+      this.getAllServices()
     },
     rag: function(data) {
       var result = data
