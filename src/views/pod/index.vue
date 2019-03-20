@@ -99,11 +99,11 @@
           stripe
         >
           <el-table-column prop="metadata.namespace" label="命名空间" width="130"/>
-          <el-table-column prop="metadata.name" label="实例名称" width="300"/>
+          <el-table-column prop="metadata.name" label="实例名称" width="305"/>
           <el-table-column prop="status.hostIP" label="READY" width="140">
             <template slot-scope="scope">{{ getReady(scope.row.status.containerStatuses) }}/{{ scope.row.spec.containers.length }}</template>
           </el-table-column>
-          <el-table-column prop="status.phase" label="状态" width="120">
+          <el-table-column prop="status.phase" label="状态" width="130">
             <template slot-scope="scope">
               <font :color="checkStatusFunc(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
             </template>
@@ -112,7 +112,7 @@
             <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
           </el-table-column>
           <el-table-column prop="status.containerStatuses[0].restartCount" label="重启次数" width="130"/>
-          <el-table-column label="操作">
+          <el-table-column label="操作" fixed="right" width="150">
             <template slot-scope="scope">
               <el-button
                 size="small"
