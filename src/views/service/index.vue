@@ -142,7 +142,7 @@ export default {
       })
     },
     newService: function() {
-      debugger
+      // debugger
       const _this = this
       var name = this.selForm.name
       var namespace = this.selForm.namespace
@@ -160,17 +160,30 @@ export default {
       })
     },
     delService: function() {
-      debugger
-      const _this = this
-      var ts = _this.sels
-      console.log(ts)
-      ts.forEach((item) => {
-        console.log(item)
-        _this.SingleDelFunc(item.metadata.name, item.metadata.namespace)
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
+        .then(() => {
+          // debugger
+          const _this = this
+          var ts = _this.sels
+          console.log(ts)
+          ts.forEach((item) => {
+            console.log(item)
+            _this.SingleDelFunc(item.metadata.name, item.metadata.namespace)
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     SingleDelFunc: function(name, namespace) {
-      debugger
+      // debugger
       const _this = this
       remove(name, namespace).then(response => {
         _this.$message({
@@ -187,11 +200,11 @@ export default {
       }
     },
     selchangeFunc: function() {
-      debugger
+      // debugger
       this.getAllServices()
     },
     nameChange: function() {
-      debugger
+      // debugger
       console.log(this.name)
       this.getAllServices()
     },
@@ -204,7 +217,7 @@ export default {
       var result = data
       if (data === 'ClusterIP') {
         result = '集群IP'
-      } else {
+      } else if (data === 'NodePort') {
         result = '节点端口'
       }
       return result

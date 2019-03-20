@@ -344,6 +344,7 @@ export default {
     },
     // 镜像仓库
     selectFunc() {
+      debugger
       const _this = this
       var projectId = this.$route.params.projectId
       this.currentPage1 = 1
@@ -418,9 +419,9 @@ export default {
       console.log(this.name2)
       this.selectLabelFunc()
     },
-    goTag(project_id, repo_name) {
+    goTag(projectId, repoName) {
       debugger
-      this.$router.push({ name: 'Tag', params: { projectId: project_id, repo_name: repo_name }})
+      this.$router.push({ name: 'Tag', params: { projectId: projectId, repoName: repoName }})
     }
 
   }
