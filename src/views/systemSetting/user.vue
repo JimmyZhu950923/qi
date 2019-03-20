@@ -1,6 +1,6 @@
 <template>
   <div class="User">
-    <el-contaner>
+    <el-container>
       <el-header>用户管理</el-header>
       <el-main>
         <el-row>
@@ -11,6 +11,7 @@
               :modal="false"
               title="新建用户"
               width="35%"
+              custom-class="dialog"
               center>
               <span>
                 <el-form ref="form" :model="form" label-width="80px">
@@ -40,7 +41,7 @@
                     <el-input v-model="form.phone"/>
                   </el-form-item>
                   <el-form-item label="初始密码">
-                    <el-radio-group v-model="form.password">
+                    <el-radio-group v-model="form.way">
                       <el-radio label="发送至手机"/>
                       <el-radio label="发送至邮箱"/>
                     </el-radio-group>
@@ -65,13 +66,16 @@
           <el-table-column
             fixed
             prop="username"
-            label="用户名"/>
+            label="用户名"
+            width="150px"/>
           <el-table-column
             prop="role"
-            label="用户角色"/>
+            label="用户角色"
+            width="150px"/>
           <el-table-column
             prop="available"
-            label="可用集群"/>
+            label="可用集群"
+            width="150px"/>
           <el-table-column
             prop="email"
             label="邮箱"/>
@@ -83,12 +87,13 @@
             label="操作">
             <template slot-scope="scope">
               <el-button :disabled="tableData[scope.$index].role== '集群管理员'" type="text" size="small" @click="handleClick(scope.row)">删除</el-button>
-              <el-button type="text" size="small" @click="updateUser = true;change(scope.row)">修改</el-button>
+              <el-button type="text" size="small" @click="updateUser = true,changeForm(scope.row)">修改</el-button>
               <el-dialog
                 :visible.sync="updateUser"
                 :modal="false"
                 title="修改用户"
                 width="35%"
+                custom-class="dialog"
                 center>
                 <span>
                   <el-form ref="form" :model="updateForm" label-width="80px">
@@ -117,25 +122,40 @@
                     <el-form-item label="手机号">
                       <el-input v-model="updateForm.phone"/>
                     </el-form-item>
-                    <el-form-item label="初始密码">
-                      <el-radio-group v-model="updateForm.password">
-                        <el-radio label="发送至手机"/>
-                        <el-radio label="发送至邮箱"/>
+                  </el-form>
+                </span>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="updateUser = false">取 消</el-button>
+                  <el-button type="primary" @click="change(scope.row)">确 定</el-button>
+                </span>
+              </el-dialog>
+              <el-button type="text" size="small" @click="resetPassword = true">重置密码</el-button>
+              <el-dialog
+                :visible.sync="resetPassword"
+                :modal="false"
+                title="重置密码"
+                width="25%"
+                center>
+                <span>
+                  <el-form ref="form" :model="resetForm" label-width="80px">
+                    <el-form-item label="发送方式">
+                      <el-radio-group v-model="resetForm.way">
+                        <el-radio label="手机"/>
+                        <el-radio label="邮箱"/>
                       </el-radio-group>
                     </el-form-item>
                   </el-form>
                 </span>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="updateUser = false">取 消</el-button>
-                  <el-button type="primary" @click="updateUser = false">确 定</el-button>
+                  <el-button @click="resetPassword = false">取 消</el-button>
+                  <el-button type="primary" @click="open(scope.row)">确 定</el-button>
                 </span>
               </el-dialog>
-              <el-button type="text" size="small" @click="open">重置密码</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-main>
-    </el-contaner>
+    </el-container>
   </div>
 </template>
 <script>
@@ -149,15 +169,17 @@ export default {
         available: 'default',
         email: 'cj.zhao@venusource.com',
         phone: '13708456550',
-        password: '发送至手机'
+        way: '发送至手机'
       },
       updateForm: {
         username: '',
         role: '',
         available: '',
         email: '',
-        phone: '',
-        password: ''
+        phone: ''
+      },
+      resetForm: {
+        way: '手机'
       },
       tableData: [
         { username: 'admin',
@@ -165,14 +187,14 @@ export default {
           available: 'default',
           email: 'cj.zhao@venusource.com',
           phone: '13708456550',
-          password: '发送至手机'
+          way: '发送至手机'
         },
         { username: 'test1',
           role: '普通用户',
           available: 'cluster_1',
           email: 'dz.tian@qq.com',
           phone: '13800138001',
-          password: '发送至邮箱'
+          way: '发送至邮箱'
         }
       ],
       options: [{
@@ -185,20 +207,69 @@ export default {
       value1: '集群管理员',
       value2: '',
       addUser: false,
-      updateUser: false
+      updateUser: false,
+      resetPassword: false
     }
   },
   methods: {
     handleClick(row) {
-      console.log(row)
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        console.log(row)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
+      })
     },
-    change(row) {
+    changeForm(row) {
       this.updateForm = row
       this.value2 = row.role
     },
-    open() {
-      this.$alert('新密码已发送至您的邮箱！', '重置密码', {
-        confirmButtonText: '确定'
+    change(row) {
+      this.$confirm('此操作将作出修改, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.updateUser = false
+        this.$message({
+          type: 'success',
+          message: '修改成功'
+        })
+      }).catch(() => {
+        this.updateUser = false
+        this.$message({
+          type: 'info',
+          message: '取消修改'
+        })
+      })
+    },
+    open(row) {
+      this.$confirm('将发送一条信息至，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.resetPassword = false
+        this.$message({
+          type: 'success',
+          message: '新密码已发送至您的' + this.resetForm.way
+        })
+      }).catch(() => {
+        this.resetPassword = false
+        this.$message({
+          type: 'info',
+          message: '取消重置密码'
+        })
       })
     }
 
@@ -213,8 +284,8 @@ export default {
     .el-main {
     color: #333;
   }
-.el-dialog__body{
-    height: 50vh;
+.dialog{
+    height: 500px;
     overflow: auto;
 }
 </style>

@@ -355,21 +355,51 @@ export default {
     },
     updateLabel() {
       // debugger
-      const _this = this
-
-      this.update = false
-      var data = this.updateformLabelAlign
-      updateLabel(data).then(respones => {
-        _this.sels2 = []
-        _this.selectLabelFunc()
+      this.$confirm('此操作将作出修改, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        this.update = false
+        var data = this.updateformLabelAlign
+        updateLabel(data).then(respones => {
+          _this.sels2 = []
+          _this.selectLabelFunc()
+        })
+        this.$message({
+          type: 'success',
+          message: '修改成功'
+        })
+      }).catch(() => {
+        this.update = false
+        this.$message({
+          type: 'info',
+          message: '取消修改'
+        })
       })
     },
     deleteLabelFunc() {
-      const _this = this
-      var data = JSON.stringify(_this.sels2[0].id)
-      deleteLabel(data).then(response => {
-        _this.sels2 = []
-        _this.selectLabelFunc()
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        var data = JSON.stringify(_this.sels2[0].id)
+        deleteLabel(data).then(response => {
+          _this.sels2 = []
+          _this.selectLabelFunc()
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
       })
     },
     // 镜像仓库
@@ -388,17 +418,32 @@ export default {
     },
 
     deleteFunc() {
-      const _this = this
-      var data = JSON.stringify(_this.sels1[0].name).split('"')[1].split('"')[0]
-      deleteRepositories(data).then(response => {
-        _this.CurrentChange(_this.page)
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        var data = JSON.stringify(_this.sels1[0].name).split('"')[1].split('"')[0]
+        deleteRepositories(data).then(response => {
+          _this.CurrentChange(_this.page)
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
       })
     },
     CurrentChange(val) {
       this.page = val
       // console.log(`当前页: ${val}`)
       const _this = this
-      var params = { page: this.page, page_size: this.page_size }
+      var params = { page: this.page, page_size: this.page_size, project_id: this.project_id }
       pageChange(params).then(response => {
         _this.tableData1 = response.result
         _this.total = response.total
