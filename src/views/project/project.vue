@@ -1,5 +1,5 @@
 <template>
-  <div style="padding:20px">
+  <div v-loading="loading" style="padding:20px">
     <el-dialog :visible.sync="dialogVisible1" width="450px">
       <el-header>新建项目</el-header>
       <el-form ref="form" :model="form" label-width="80px" @submit.native.prevent>
@@ -131,6 +131,7 @@ import { getProjects, addProject, deleteProject, changeProject } from '@/api/pro
 export default {
   data() {
     return {
+      loading: true,
       plc: null,
       name: '',
       tableData: [],
@@ -183,9 +184,10 @@ export default {
         page: _this.currentPage
       }
       getProjects(data).then(response => {
-        console.log(response)
+        // console.log(response)
         _this.tableData = response.data
         _this.countPage = response.total
+        _this.loading = false
       })
     },
     selchangeFunc: function() {
@@ -203,9 +205,9 @@ export default {
         .then(() => {
           const _this = this
           var ps = _this.multipleSelection
-          debugger
+
           ps.forEach((item) => {
-            console.log(item.project_id)
+            // console.log(item.project_id)
             _this.SingleDelFunc(item.project_id)
           })
           this.$message({
@@ -229,7 +231,7 @@ export default {
     addFunc: function() {
       const _this = this
       var data = this.form
-      console.log(data)
+      // console.log(data)
       addProject(data).then(response => {
         _this.$message({
           type: 'success',
@@ -253,7 +255,7 @@ export default {
     changeFunc: function() {
       const _this = this
       var data = _this.form2
-      console.log(data)
+      // console.log(data)
       changeProject(data).then(response => {
         _this.dialogVisible = false
         _this.selectFunc()
@@ -307,7 +309,7 @@ export default {
       }
     },
     goRouter: function(project_id) {
-      debugger
+      // console.log
       this.$router.push({ name: 'Repositories', params: { projectId: project_id }})
     }
   }

@@ -10,8 +10,16 @@ export function getPods(data) {
 
 export function update(name, nameSpace) {
   return request({
-    url: 'http://localhost:8080/v1/pods/',
+    url: 'http://localhost:8080/v1/pods',
     method: 'put',
     params: { name: name, nameSpace: nameSpace }
+  })
+}
+
+export function delPod(data) {
+  return request({
+    url: 'http://localhost:8080/v1/pods',
+    method: 'delete',
+    params: data
   })
 }
