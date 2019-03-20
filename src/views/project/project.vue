@@ -105,7 +105,7 @@
       small
       @current-change="handlePageChange"
     />
-    <el-dialog :visible.sync="dialogVisible" title="提示" width="30%">
+    <el-dialog :visible.sync="dialogVisible" title="更改访问级别" width="30%">
       <span>
         <el-form :model="form2" label-width="80px">
           <el-form-item label="访问级别">
