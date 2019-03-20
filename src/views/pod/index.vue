@@ -21,9 +21,9 @@
                 <el-select v-model="namespace2" placeholder="请选择">
                   <el-option
                     v-for="item in options4"
-                    :key="item.name"
-                    :label="item.name"
-                    :value="item.name"/>
+                    :key="item.metadata.name"
+                    :label="item.metadata.name"
+                    :value="item.metadata.name"/>
                 </el-select>
               </el-form-item>
             </el-form>
@@ -78,12 +78,12 @@
         <el-button size="mini" @click="dialogVisible1 = true">新建</el-button>
       </el-col>
       <el-col :span="4">
-        <el-select v-model="namespace1" size="mini" placeholder="请选择">
+        <el-select v-model="namespace1" size="mini" placeholder="请选择" @change="selectFunc">
           <el-option
             v-for="item in options4"
-            :key="item.name"
-            :label="item.name"
-            :value="item.name"
+            :key="item.metadata.name"
+            :label="item.metadata.name"
+            :value="item.metadata.name"
           />
         </el-select>
       </el-col>
@@ -98,8 +98,7 @@
           style="width:100%"
           stripe
         >
-          <el-table-column prop="metadata.namespace" label="命名空间" width="130"/>
-          <el-table-column prop="metadata.name" label="实例名称" width="305"/>
+          <el-table-column prop="metadata.name" label="实例名称" width="300"/>
           <el-table-column prop="status.hostIP" label="READY" width="140">
             <template slot-scope="scope">{{ getReady(scope.row.status.containerStatuses) }}/{{ scope.row.spec.containers.length }}</template>
           </el-table-column>
@@ -108,11 +107,11 @@
               <font :color="checkStatusFunc(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
             </template>
           </el-table-column>
-          <el-table-column prop="metadata.creationTimestamp" label="AGE" width="150">
+          <el-table-column prop="metadata.creationTimestamp" label="AGE">
             <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
           </el-table-column>
-          <el-table-column prop="status.containerStatuses[0].restartCount" label="重启次数" width="130"/>
-          <el-table-column label="操作" fixed="right" width="150">
+          <el-table-column prop="status.containerStatuses[0].restartCount" label="重启次数"/>
+          <el-table-column label="操作" width="150">
             <template slot-scope="scope">
               <el-button
                 size="small"
@@ -138,6 +137,7 @@ import { getProjects } from '@/api/project'
 import { getRepositories } from '@/api/repositories'
 import { all } from '@/api/tag'
 import { createD } from '@/api/deployment'
+import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
     return {
@@ -313,6 +313,9 @@ export default {
           type: 'success',
           message: '删除成功'
         })
+        setTimeout(() => {
+          this.selectFunc()
+        }, 4000)
       })
     },
     rr: function() {
@@ -321,7 +324,10 @@ export default {
       this.selectFunc()
     },
     selNameSpace: function() {
-
+      getAllNamespace().then(response => {
+        debugger
+        this.options4 = response.data.items
+      })
     }
   }
 }

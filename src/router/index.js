@@ -73,6 +73,18 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/deploy',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'deployment',
+        component: () => import('@/views/deployment/index'),
+        meta: { title: '工作负载', icon: 'deployment' }
+      }
+    ]
+  },
+  {
     path: '/pod',
     component: Layout,
     children: [

@@ -7,3 +7,11 @@ export function createD(data) {
     params: data
   })
 }
+
+export function list(data) {
+  return request({
+    url: 'http://localhost:8080/v1/wb/',
+    method: 'get',
+    params: data
+  })
+}

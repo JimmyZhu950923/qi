@@ -257,12 +257,27 @@ export default {
       this.dialogVisible = true
     },
     changeFunc: function() {
-      const _this = this
-      var data = _this.form2
-      // console.log(data)
-      changeProject(data).then(response => {
-        _this.dialogVisible = false
-        _this.selectFunc()
+      this.$confirm('此操作将修改权限, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        var data = _this.form2
+        // console.log(data)
+        changeProject(data).then(response => {
+          _this.dialogVisible = false
+          _this.selectFunc()
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消修改'
+        })
       })
     },
     cg: function(bool) {
