@@ -35,14 +35,7 @@
           >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
         </el-col>
         <el-col :span="4" style="margin-left:550px">
-          <el-select v-model="plc" size="small" placeholder="请选择" @change="selchangeFunc">
-            <el-option
-              v-for="item in options"
-              :key="item.value1"
-              :label="item.label"
-              :value="item.value1"
-            />
-          </el-select>
+          <el-select size="small" placeholder="请选择"/>
         </el-col>
         <el-col :span="1" style="margin-left:10px">
           <el-button size="small" icon="el-icon-refresh" circle @click="rr"/>
@@ -85,7 +78,6 @@ export default {
       selForm: {
       },
       stripe: true,
-      value: '',
       pageSize: 20,
       currentPage: 1,
       countPage: 0
