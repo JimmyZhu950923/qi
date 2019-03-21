@@ -1,22 +1,22 @@
 <template>
   <el-main v-loading="loading">
-    <el-row>
-      <el-col :offset="18" :span="4">
-        <el-select v-model="namespace1" size="mini" placeholder="请选择" @change="selectFunc">
-          <el-option
-            v-for="item in options4"
-            :key="item.metadata.name"
-            :label="item.metadata.name"
-            :value="item.metadata.name"
-          />
-        </el-select>
-      </el-col>
-      <el-col :span="1">
-        <el-button size="mini" icon="el-icon-refresh" circle @click="rr"/>
-      </el-col>
-    </el-row>
     <el-tabs>
       <el-tab-pane label="容器实例">
+        <el-row>
+          <el-col :span="4">
+            <el-select v-model="namespace1" size="mini" placeholder="请选择" @change="selectFunc">
+              <el-option
+                v-for="item in options4"
+                :key="item.metadata.name"
+                :label="item.metadata.name"
+                :value="item.metadata.name"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="1">
+            <el-button size="mini" icon="el-icon-refresh" circle @click="rr"/>
+          </el-col>
+        </el-row>
         <el-table
           :data="podData"
           style="width:100%"
