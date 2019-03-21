@@ -133,42 +133,6 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/service',
-    component: Layout,
-    children: [
-      {
-        path: 'service',
-        name: 'Service',
-        component: () => import('@/views/service/index'),
-        meta: { title: 'Service', icon: 'server' }
-      }
-    ]
-  },
-
-  {
-    path: '/storage',
-    component: Layout,
-    children: [
-      {
-        path: 'storage',
-        name: 'Storage',
-        component: () => import('@/views/storage/index'),
-        meta: { title: 'Storage', icon: 'storage' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
-  {
     path: '/Repo',
     component: Layout,
     hidden: true,
