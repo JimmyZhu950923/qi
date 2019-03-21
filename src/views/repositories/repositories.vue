@@ -99,7 +99,7 @@
                   @keyup.native="nameChange2"
                 />
               </el-col>
-              <el-dialog :visible.sync="single" title="查询单个标签" width="30%" center>
+              <el-dialog :visible.sync="single" title="查询单个标签" width="30%">
                 <el-form :label-position="labelPosition" :model="singleForm" label-width="80px">
                   <el-form-item label="标签编号">
                     <el-input v-model="singleForm.id"/>
@@ -110,7 +110,7 @@
                   <el-button type="primary" @click="FindSingle">确 定</el-button>
                 </span>
               </el-dialog>
-              <el-dialog :visible.sync="dialogVisible" title="添加标签" width="30%" center>
+              <el-dialog :visible.sync="dialogVisible" title="添加标签" width="30%">
                 <el-form :label-position="labelPosition" :model="formLabelAlign" label-width="80px">
                   <el-form-item label="标签名字">
                     <el-input v-model="formLabelAlign.name"/>
@@ -129,7 +129,7 @@
                   <el-button type="primary" @click="addLabel">确 定</el-button>
                 </span>
               </el-dialog>
-              <el-dialog :visible.sync="update" title="修改标签" width="30%" center>
+              <el-dialog :visible.sync="update" title="修改标签" width="30%">
                 <el-form
                   :label-position="labelPosition"
                   :model="updateformLabelAlign"
