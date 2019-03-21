@@ -90,11 +90,11 @@
             stripe>
             <el-table-column label="名称" prop="metadata.name" width="200"/>
             <el-table-column label="POD" prop="status.readyReplicas">
-              <template slot-scope="scope">{{ scope.row.status.readyReplicas == undefined ? 0 :scope.row.status.readyReplicas }}/{{ scope.row.status.replicas }}</template>
+              <template slot-scope="scope">{{ scope.row.status.readyReplicas == undefined?0:scope.row.status.readyReplicas }}/{{ scope.row.status.replicas == undefined?0:scope.row.status.replicas }}</template>
             </el-table-column>
-            <el-table-column label="现在" prop="status.updatedReplicas"/>
+            <el-table-column label="现在" prop=""><template slot-scope="scope">{{ scope.row.status.updatedReplicas==undefined?0:scope.row.status.updatedReplicas }}</template></el-table-column>
             <el-table-column label="可用" prop="status.availableReplicas">
-              <template slot-scope="scope">{{ scope.row.status.availableReplicas == undefined ? 0 :scope.row.status.availableReplicas }}</template>
+              <template slot-scope="scope">{{ scope.row.status.availableReplicas == undefined?0:scope.row.status.availableReplicas }}</template>
             </el-table-column>
             <el-table-column prop="metadata.creationTimestamp" label="存活时间">
               <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
