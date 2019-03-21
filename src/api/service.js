@@ -9,11 +9,11 @@ export function getServices(data) {
   })
 }
 // 增
-export function addServices(name, namespace, port) {
+export function addServices(name, namespace, type, port) {
   return request({
     url: 'http://127.0.0.1:8080/v1/service',
     method: 'post',
-    params: { name: name, namespace: namespace, port: port }
+    params: { name: name, namespace: namespace, type: type, port: port }
   })
 }
 // 删

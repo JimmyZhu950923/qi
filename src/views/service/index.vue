@@ -8,7 +8,7 @@
             <el-input v-model="selForm.name" class="searchClass"/>
           </el-form-item>
           <el-form-item label="命名空间:">
-            <el-select v-model="namespace2">
+            <el-select v-model="selForm.namespace">
               <el-option
                 v-for="item in options4"
                 :key="item.metadata.name"
@@ -125,8 +125,8 @@ export default {
       }],
       options4: [],
       stripe: true,
+      namespace: '',
       namespace1: '',
-      namespace2: 'default',
       value: '',
       pageSize: 20,
       currentPage: 1,
@@ -151,12 +151,13 @@ export default {
       })
     },
     newService: function() {
-      // debugger
+      debugger
       const _this = this
       var name = this.selForm.name
       var namespace = this.selForm.namespace
+      var type = this.selForm.type
       var port = this.selForm.port
-      addServices(name, namespace, port).then(response => {
+      addServices(name, namespace, type, port).then(response => {
         _this.$message({
           type: 'success',
           message: '新建成功!'
@@ -164,6 +165,7 @@ export default {
         _this.dialogVisible = false
         _this.selForm.name = ''
         _this.selForm.namespace = ''
+        _this.selForm.type = ''
         _this.selForm.port = 0
         _this.getAllServices()
       })
@@ -215,8 +217,8 @@ export default {
       })
     },
     rr: function() {
+      this.namespace = null
       this.namespace1 = null
-      this.namespace2 = null
       this.name = null
       this.getAllServices()
     },
