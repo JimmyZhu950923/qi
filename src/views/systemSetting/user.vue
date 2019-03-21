@@ -12,7 +12,7 @@
               title="新建用户"
               width="35%"
               custom-class="dialog"
-              center>
+            >
               <span>
                 <el-form ref="form" :model="form" label-width="80px">
                   <el-form-item label="用户名">
@@ -86,15 +86,22 @@
             fixed="right"
             label="操作">
             <template slot-scope="scope">
-              <el-button :disabled="tableData[scope.$index].role== '集群管理员'" type="text" size="small" @click="handleClick(scope.row)">删除</el-button>
-              <el-button type="text" size="small" @click="updateUser = true,changeForm(scope.row)">修改</el-button>
+              <el-button
+                :disabled="tableData[scope.$index].role== '集群管理员'"
+                type="text"
+                size="small"
+                @click="handleClick(scope.row)">删除</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="updateUser = true,changeForm(scope.row)">修改</el-button>
               <el-dialog
                 :visible.sync="updateUser"
                 :modal="false"
                 title="修改用户"
                 width="35%"
                 custom-class="dialog"
-                center>
+              >
                 <span>
                   <el-form ref="form" :model="updateForm" label-width="80px">
                     <el-form-item label="用户名">
@@ -135,7 +142,7 @@
                 :modal="false"
                 title="重置密码"
                 width="25%"
-                center>
+              >
                 <span>
                   <el-form ref="form" :model="resetForm" label-width="80px">
                     <el-form-item label="发送方式">

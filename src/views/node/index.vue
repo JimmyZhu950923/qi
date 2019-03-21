@@ -12,7 +12,7 @@
                   :visible.sync="addNew"
                   title="新建集群"
                   width="40%"
-                  center>
+                >
                   <span>
                     <el-form ref="form" :model="form" label-width="80px">
                       <el-form-item label="集群名称">
@@ -35,22 +35,13 @@
                   :visible.sync="addNode"
                   title="添加节点"
                   width="40%"
-                  center>
+                >
                   <span v-html="str"/>
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="addNode = false">取 消</el-button>
                     <el-button type="primary" @click="addNode = false">确 定</el-button>
                   </span>
                 </el-dialog>
-              </el-col>
-              <el-col :span="7">
-                <el-input
-                  v-model="name1"
-                  size="mini"
-                  placeholder="过滤节点"
-                  prefix-icon="el-icon-search"
-                  @keyup.native="nameChange1"
-                />
               </el-col>
             </el-row>
             <el-table
@@ -96,16 +87,12 @@
               </el-table-column>
             </el-table>
           </el-tab-pane>
-          <el-tab-pane label="监控" name="second">监控</el-tab-pane>
-          <el-tab-pane label="时间" name="third">事件</el-tab-pane>
-          <el-tab-pane label="日志源" name="fourth">日志源</el-tab-pane>
           <el-tab-pane label="命名空间" name="five">
             <el-row>
-              <el-col :span="10">
+              <el-col :span="18">
                 <el-button type="primary" size="mini" round @click="getAllNsp">查询</el-button>
-                <el-button type="success" size="mini" round @click="single = true">名字查询</el-button>
-                <el-button type="info" size="mini" round @click="insert = true">添加</el-button>
-                <el-dialog :visible.sync="single" title="根据name查询单个namespace" width="30%" center>
+                <el-button type="success" size="mini" round @click="insert = true">添加</el-button>
+                <el-dialog :visible.sync="single" title="根据name查询单个namespace" width="30%">
                   <el-form :label-position="labelPosition" :model="singleForm" label-width="80px">
                     <el-form-item label="name">
                       <el-input v-model="singleForm.name"/>
@@ -116,10 +103,10 @@
                     <el-button type="primary" @click="getNsp">确 定</el-button>
                   </span>
                 </el-dialog>
-                <el-dialog :visible.sync="insert" title="添加namespace" width="30%" center>
+                <el-dialog :visible.sync="insert" title="添加namespace" width="30%">
                   <el-form :label-position="labelPosition" :model="insertForm" label-width="80px">
                     <el-form-item label="name">
-                      <el-input v-model="insertForm.name"/>
+                      <el-input v-model="insertForm.name" />
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
@@ -127,6 +114,12 @@
                     <el-button type="primary" @click="addNsp">确 定</el-button>
                   </span>
                 </el-dialog>
+              </el-col>
+              <el-col :span="4">
+                <el-input v-model="singleForm.name" style="width:175px" size="mini" placeholder="请输入NAME" prefix-icon="el-icon-search"/>
+              </el-col>
+              <el-col :span="2">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="getNsp"/>
               </el-col>
             </el-row>
             <el-table
@@ -148,7 +141,7 @@
               </el-table-column>
               <el-table-column fixed="right" label="操作">
                 <template slot-scope="scope">
-                  <el-button type="danger" size="mini" round @click="deleteNsp(scope.row)">删除</el-button>
+                  <el-button type="danger" size="small" round @click="deleteNsp(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -183,7 +176,6 @@ export default {
       str: '请SSH登录主机执行如下命令:</br>curl 10.10.17.111:8080/initcluster.sh | sh - -i C-2342id -arch arm64',
       loading: true,
       namespaceData: [],
-      single: false,
       insert: false,
       labelPosition: 'right'
     }
@@ -210,7 +202,6 @@ export default {
     getNsp() {
       // debugger
       this.namespaceData = []
-      this.single = false
       const _this = this
       var params = _this.singleForm.name
       getNamespace(params).then(response => {
@@ -227,7 +218,7 @@ export default {
     },
     deleteNsp(row) {
       // debugger
-      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+      this.$confirm('此操作会删除该空间下的所有资源, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -329,11 +320,7 @@ export default {
       if (command === 'b') {
         alert('迁移方法')
       }
-    },
-    nameChange1: function() {
-      // this.selectFunc()
     }
-
   }
 }
 </script>
