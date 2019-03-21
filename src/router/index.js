@@ -194,6 +194,19 @@ export const constantRouterMap = [
   // },
 
   {
+    path: '/storage',
+    component: Layout,
+    children: [
+      {
+        path: 'storage',
+        name: 'Storage',
+        component: () => import('@/views/storage/index'),
+        meta: { title: 'Storage', icon: 'storage' }
+      }
+    ]
+  },
+
+  {
     path: 'external-link',
     component: Layout,
     children: [

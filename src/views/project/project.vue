@@ -177,6 +177,7 @@ export default {
   },
   methods: {
     selectFunc: function() {
+      debugger
       const _this = this
       var data = {
         name: _this.name,
@@ -195,6 +196,7 @@ export default {
       this.selectFunc()
     },
     handleSelectionChange: function(val) {
+      debugger
       this.multipleSelection = val
     },
     deleteFunc: function() {
@@ -233,6 +235,7 @@ export default {
       })
     },
     addFunc: function() {
+      debugger
       const _this = this
       var data = this.form
       // console.log(data)
