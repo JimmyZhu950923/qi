@@ -91,7 +91,7 @@ export const constantRouterMap = [
         path: 'storage',
         name: 'Storage',
         component: () => import('@/views/storage/index'),
-        meta: { title: '储存', icon: 'storage' }
+        meta: { title: '存储', icon: 'storage' }
       }
     ]
   },
@@ -129,42 +129,6 @@ export const constantRouterMap = [
         name: 'Tag',
         component: () => import('@/views/tag/index'),
         meta: { title: 'Tag', icon: 'tag' }
-      }
-    ]
-  },
-  {
-    path: '/service',
-    component: Layout,
-    children: [
-      {
-        path: 'service',
-        name: 'Service',
-        component: () => import('@/views/service/index'),
-        meta: { title: 'Service', icon: 'server' }
-      }
-    ]
-  },
-
-  {
-    path: '/storage',
-    component: Layout,
-    children: [
-      {
-        path: 'storage',
-        name: 'Storage',
-        component: () => import('@/views/storage/index'),
-        meta: { title: 'Storage', icon: 'storage' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
       }
     ]
   },
