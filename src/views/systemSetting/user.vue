@@ -5,7 +5,7 @@
       <el-main>
         <el-row>
           <el-col>
-            <el-button type="primary" round size="mini" @click="addUser = true">新建</el-button>
+            <el-button type="primary" round size="mini" icon="el-icon-plus" @click="addUser = true">新建</el-button>
             <el-dialog
               :visible.sync="addUser"
               :modal="false"
@@ -50,7 +50,7 @@
               </span>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="addUser = false">取 消</el-button>
-                <el-button type="primary" @click="addUser = false">确 定</el-button>
+                <el-button type="primary" @click="addNew">确 定</el-button>
               </span>
             </el-dialog>
           </el-col>
@@ -67,32 +67,33 @@
             fixed
             prop="username"
             label="用户名"
-            width="150px"/>
+          />
           <el-table-column
             prop="role"
             label="用户角色"
-            width="150px"/>
+          />
           <el-table-column
             prop="available"
-            label="可用集群"
-            width="150px"/>
+            label="可用集群"/>
           <el-table-column
             prop="email"
-            label="邮箱"/>
+            label="邮箱"
+            width="250px"/>
           <el-table-column
             prop="phone"
             label="手机号"/>
           <el-table-column
             fixed="right"
-            label="操作">
+            label="操作"
+            width="230px">
             <template slot-scope="scope">
               <el-button
                 :disabled="tableData[scope.$index].role== '集群管理员'"
-                type="text"
+                type="danger"
                 size="small"
                 @click="handleClick(scope.row)">删除</el-button>
               <el-button
-                type="text"
+                type="warning"
                 size="small"
                 @click="updateUser = true,changeForm(scope.row)">修改</el-button>
               <el-dialog
@@ -136,7 +137,7 @@
                   <el-button type="primary" @click="change(scope.row)">确 定</el-button>
                 </span>
               </el-dialog>
-              <el-button type="text" size="small" @click="resetPassword = true">重置密码</el-button>
+              <el-button type="info" size="small" @click="resetPassword = true">重置密码</el-button>
               <el-dialog
                 :visible.sync="resetPassword"
                 :modal="false"
@@ -261,7 +262,7 @@ export default {
       })
     },
     open(row) {
-      this.$confirm('将发送一条信息至，是否继续?', '提示', {
+      this.$confirm('将发送一条信息至' + this.resetForm.way + '，是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -277,6 +278,13 @@ export default {
           type: 'info',
           message: '取消重置密码'
         })
+      })
+    },
+    addNew() {
+      this.addUser = false
+      this.$message({
+        type: 'success',
+        message: '新建用户完成'
       })
     }
 

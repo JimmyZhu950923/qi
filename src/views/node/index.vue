@@ -6,8 +6,8 @@
           <el-tab-pane label="主机" name="first">
             <el-row>
               <el-col :span="15">
-                <el-button type="primary" round size="mini" @click="addNew = true">新建</el-button>
-                <el-button size="mini" type="success" round @click="addNode = true">添加节点</el-button>
+                <el-button type="primary" round size="mini" icon="el-icon-plus" @click="addNew = true">新建</el-button>
+                <el-button size="mini" type="success" round icon="el-icon-plus" @click="addNode = true">添加节点</el-button>
                 <el-dialog
                   :visible.sync="addNew"
                   title="新建集群"
@@ -54,33 +54,32 @@
               style="width: 100%">
               <el-table-column
                 prop="status.addresses[0].address"
-                label="NAME">
+                label="名称">
                 <template slot-scope="scope"><font color="#2995d7">{{ scope.row.metadata.name }}</font></template>
               </el-table-column>
               <el-table-column
                 prop="status.conditions[3].status"
-                label="STATUS">
+                label="状态">
                 <template slot-scope="scope"><font :color="getColor(scope.row.status.conditions[3].status)">{{ scope.row.status.conditions[3].type }}</font></template>
               </el-table-column>
               <el-table-column
-                label="ROLES">
+                label="角色">
                 <template slot-scope="scope">{{ getType(scope.row.metadata.labels) }}</template>
               </el-table-column>
               <el-table-column
-                label="AGE">
+                label="存活时长">
               <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template></el-table-column>
               <el-table-column
-                label="VERSION">
+                label="版本">
                 <template slot-scope="scope">{{ scope.row.status.nodeInfo.kubeletVersion }}</template>
               </el-table-column>
               <el-table-column
-                prop="address"
                 label="操作">
                 <template slot-scope="scope">
                   <el-dropdown size="small" split-button type="primary" @click="selectRow(scope.row.metadata.name)" @command="handleCommand">
                     查看
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="b">迁移</el-dropdown-item>
+                      <!-- <el-dropdown-item command="b">迁移</el-dropdown-item> -->
                     </el-dropdown-menu>
                   </el-dropdown>
                 </template>
@@ -90,19 +89,8 @@
           <el-tab-pane label="命名空间" name="five">
             <el-row>
               <el-col :span="18">
-                <el-button type="primary" size="mini" round @click="getAllNsp">查询</el-button>
-                <el-button type="success" size="mini" round @click="insert = true">添加</el-button>
-                <el-dialog :visible.sync="single" title="根据name查询单个namespace" width="30%">
-                  <el-form :label-position="labelPosition" :model="singleForm" label-width="80px">
-                    <el-form-item label="name">
-                      <el-input v-model="singleForm.name"/>
-                    </el-form-item>
-                  </el-form>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="single = false">取 消</el-button>
-                    <el-button type="primary" @click="getNsp">确 定</el-button>
-                  </span>
-                </el-dialog>
+                <el-button type="success" size="mini" round icon="el-icon-plus" @click="insert = true">添加</el-button>
+                <el-button type="primary" size="mini" round icon="el-icon-refresh" @click="getAllNsp">刷新</el-button>
                 <el-dialog :visible.sync="insert" title="添加namespace" width="30%">
                   <el-form :label-position="labelPosition" :model="insertForm" label-width="80px">
                     <el-form-item label="name">
@@ -115,11 +103,10 @@
                   </span>
                 </el-dialog>
               </el-col>
-              <el-col :span="4">
-                <el-input v-model="singleForm.name" style="width:175px" size="mini" placeholder="请输入NAME" prefix-icon="el-icon-search"/>
-              </el-col>
-              <el-col :span="2">
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="getNsp"/>
+              <el-col :span="5">
+                <el-input v-model="singleForm.name" :clearable="true" style="width:245px" size="mini" placeholder="请输入NAME" @clear="getAllNsp">
+                  <el-button slot="append" size="mini" icon="el-icon-search" @click="getNsp"/>
+                </el-input>
               </el-col>
             </el-row>
             <el-table
@@ -130,18 +117,18 @@
               height="430px"
               tooltip-effect="dark"
               style="width: 100%">
-              <el-table-column label="NAME" prop="metadata.name"/>
-              <el-table-column label="STATUS">
+              <el-table-column label="名称" prop="metadata.name"/>
+              <el-table-column label="状态">
                 <template slot-scope="scope">
                   <font :color="getColor1(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
                 </template>
               </el-table-column>
-              <el-table-column label="CREATIONTIMESTAMP">
+              <el-table-column label="创建时间">
                 <template slot-scope="scope">{{ getCreateTime(scope.row.metadata.creationTimestamp) }}</template>
               </el-table-column>
-              <el-table-column fixed="right" label="操作">
+              <el-table-column fixed="right" label="操作" width="120px">
                 <template slot-scope="scope">
-                  <el-button type="danger" size="small" round @click="deleteNsp(scope.row)">删除</el-button>
+                  <el-button type="danger" size="small" @click="deleteNsp(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
