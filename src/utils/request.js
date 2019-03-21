@@ -38,12 +38,7 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
-      if (res.code === 409) {
-        Message({
-          type: 'error',
-          message: '项目名称已存在!'
-        })
-      }
+
       // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
         MessageBox.confirm(
@@ -66,12 +61,20 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    if (error.code === 409) {
+      console.log('err' + error)
+      Message({
+        type: 'error',
+        message: error.message
+      })
+    } else {
+      console.log('err' + error) // for debug
+      Message({
+        message: error.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     return Promise.reject(error)
   }
 )

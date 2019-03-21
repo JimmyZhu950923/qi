@@ -1,5 +1,5 @@
 <template>
-  <div style="padding:20px">
+  <div v-loading="loading" style="padding:20px">
     <el-dialog :visible.sync="dialogVisible1" width="450px">
       <el-header>新建项目</el-header>
       <el-form ref="form" :model="form" label-width="80px" @submit.native.prevent>
@@ -105,7 +105,7 @@
       small
       @current-change="handlePageChange"
     />
-    <el-dialog :visible.sync="dialogVisible" title="提示" width="30%">
+    <el-dialog :visible.sync="dialogVisible" title="更改访问级别" width="30%">
       <span>
         <el-form :model="form2" label-width="80px">
           <el-form-item label="访问级别">
@@ -131,6 +131,7 @@ import { getProjects, addProject, deleteProject, changeProject } from '@/api/pro
 export default {
   data() {
     return {
+      loading: true,
       plc: null,
       name: '',
       tableData: [],
@@ -167,7 +168,8 @@ export default {
           value1: '1',
           label: '公共项目'
         }
-      ]
+      ],
+      flag: 0
     }
   },
   created() {
@@ -184,9 +186,10 @@ export default {
         page: _this.currentPage
       }
       getProjects(data).then(response => {
-        console.log(response)
+        // console.log(response)
         _this.tableData = response.data
         _this.countPage = response.total
+        _this.loading = false
       })
     },
     selchangeFunc: function() {
@@ -197,7 +200,7 @@ export default {
       this.multipleSelection = val
     },
     deleteFunc: function() {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -205,14 +208,10 @@ export default {
         .then(() => {
           const _this = this
           var ps = _this.multipleSelection
-          debugger
+
           ps.forEach((item) => {
-            console.log(item.project_id)
+            // console.log(item.project_id)
             _this.SingleDelFunc(item.project_id)
-          })
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
           })
         })
         .catch(() => {
@@ -225,6 +224,13 @@ export default {
     SingleDelFunc: function(project_id) {
       const _this = this
       deleteProject({ id: project_id }).then(response => {
+        _this.flag++
+        if (_this.flag === this.multipleSelection.length) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+        }
         _this.selectFunc()
       })
     },
@@ -232,7 +238,7 @@ export default {
       debugger
       const _this = this
       var data = this.form
-      console.log(data)
+      // console.log(data)
       addProject(data).then(response => {
         _this.$message({
           type: 'success',
@@ -254,12 +260,27 @@ export default {
       this.dialogVisible = true
     },
     changeFunc: function() {
-      const _this = this
-      var data = _this.form2
-      console.log(data)
-      changeProject(data).then(response => {
-        _this.dialogVisible = false
-        _this.selectFunc()
+      this.$confirm('此操作将修改权限, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        var data = _this.form2
+        // console.log(data)
+        changeProject(data).then(response => {
+          _this.dialogVisible = false
+          _this.selectFunc()
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消修改'
+        })
       })
     },
     cg: function(bool) {
@@ -300,8 +321,6 @@ export default {
       this.selectFunc()
     },
     nameChange: function() {
-      debugger
-      console.log(this.name)
       this.selectFunc()
     },
     enterFunc: function(event) {
@@ -312,7 +331,7 @@ export default {
       }
     },
     goRouter: function(project_id) {
-      debugger
+      // console.log
       this.$router.push({ name: 'Repositories', params: { projectId: project_id }})
     }
   }

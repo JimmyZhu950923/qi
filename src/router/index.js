@@ -73,6 +73,30 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/deploy',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'deployment',
+        component: () => import('@/views/deployment/index'),
+        meta: { title: '工作负载', icon: 'deployment' }
+      }
+    ]
+  },
+  {
+    path: '/pod',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Pod',
+        component: () => import('@/views/pod/index'),
+        meta: { title: 'Pod', icon: 'pods' }
+      }
+    ]
+  },
+  {
     path: '/center',
     component: Layout,
     children: [
@@ -156,18 +180,18 @@ export const constantRouterMap = [
     ]
   },
 
-  {
-    path: '/service',
-    component: Layout,
-    children: [
-      {
-        path: 'service',
-        name: 'Service',
-        component: () => import('@/views/service/index'),
-        meta: { title: 'Service', icon: 'server' }
-      }
-    ]
-  },
+  // {
+  //   path: '/service',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'service',
+  //       name: 'Service',
+  //       component: () => import('@/views/service/index'),
+  //       meta: { title: 'Service', icon: 'server' }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/storage',
@@ -195,19 +219,59 @@ export const constantRouterMap = [
   {
     path: '/Repo',
     component: Layout,
-    // hidden: true,
+    hidden: true,
     children: [
       {
         path: 'repositories/:projectId',
         name: 'Repositories',
         component: () => import('@/views/repositories/repositories'),
-        meta: { title: '镜像中心', icon: 'repositories' },
-        hidden: true
+        meta: { title: '镜像仓库', icon: 'repositories' }
+        // hidden: true
       }
 
     ]
   },
+  {
+    path: '/node',
+    component: Layout,
+    // hidden: true,
+    children: [
+      {
+        path: 'node',
+        name: 'Node',
+        component: () => import('@/views/node/index'),
+        meta: { title: '集群', icon: 'repositories' }
+      },
+      {
+        path: 'showNode/:nodeName',
+        name: 'ShowNode',
+        hidden: true,
+        component: () => import('@/views/node/showNode')
+      }
 
+    ]
+  },
+  {
+    path: '/systemSetting',
+    component: Layout,
+    // hidden: true,
+    meta: { title: '系统管理', icon: 'setting' },
+    children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/systemSetting/user'),
+        meta: { title: '用户管理' }
+      },
+      {
+        path: 'setting',
+        name: 'Setting',
+        component: () => import('@/views/systemSetting/setting'),
+        meta: { title: '系统设置' }
+      }
+
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

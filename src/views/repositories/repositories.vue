@@ -1,13 +1,29 @@
 <template>
   <div class="Repositories">
     <el-container>
-      <el-main>
+      <el-main v-loading="loading">
         <el-tabs v-model="activeName">
           <el-tab-pane label="镜像仓库" name="first">
             <el-row>
-              <el-col :span="18">
+              <el-col :span="14">
                 <el-button type="primary" round size="mini" @click="selectFunc">查询</el-button>
-                <el-button :disabled="sels1.length==0" size="mini" type="danger" round @click="deleteFunc">删除</el-button>
+                <el-button :disabled="sels1.length !=1" size="mini" type="danger" round @click="deleteFunc">删除</el-button>
+              </el-col>
+              <el-col :span="2" :offset="2">
+                <el-popover
+                  placement="bottom"
+                  trigger="click">
+                  <h3>推送镜像
+                    <el-tooltip class="item" effect="dark" content="推送一个镜像到当前项目的参考命令。" placement="top-start">
+                      <el-button size="mini" type="text"><i class="el-icon-warning"/></el-button>
+                    </el-tooltip>
+                  </h3>
+                  <div>在项目中标记镜像：</div>
+                  <p><b>docker tag SOURCE_IMAGE[:TAG] kube.gwunion.cn/{{ proName }}/IMAGE[:TAG]</b></p>
+                  <div>推送镜像到当前项目：</div>
+                  <p><b>docker push kube.gwunion.cn/{{ proName }}/IMAGE[:TAG]</b></p>
+                  <el-button slot="reference" size="mini" type="text" round>推送镜像</el-button>
+                </el-popover>
               </el-col>
               <el-col :span="4">
                 <el-input
@@ -30,14 +46,14 @@
 
               @selection-change="selectionChange1"
             >
-              <el-table-column type="selection" width="100"/>
-              <el-table-column prop="name" label="名称" width="350" sortable>
+              <el-table-column type="selection" width="80"/>
+              <el-table-column prop="name" label="名称" sortable>
                 <template slot-scope="scope">
                   <a @click="goTag(project_id,scope.row.name)">{{ scope.row.name }}</a>
                 </template>
               </el-table-column>
-              <el-table-column prop="tags_count" label="标签数" width="250" sortable/>
-              <el-table-column prop="pull_count" label="下载数" width="250" sortable/>
+              <el-table-column prop="tags_count" label="标签数" sortable/>
+              <el-table-column prop="pull_count" label="下载数" sortable/>
             </el-table>
             <div class="block">
               <el-pagination
@@ -58,7 +74,7 @@
                 <el-button class="button" type="primary" size="mini" round @click="selectLabelFunc">查询</el-button>
                 <el-button class="button" type="info" size="mini" round @click="dialogVisible=true">添加</el-button>
                 <el-button
-                  :disabled="sels2.length==0"
+                  :disabled="sels2.length!=1"
                   class="button"
                   type="warning"
                   size="mini"
@@ -66,7 +82,7 @@
                   @click="update=true"
                 >修改</el-button>
                 <el-button
-                  :disabled="sels2.length==0"
+                  :disabled="sels2.length!=1"
                   class="button"
                   type="danger"
                   size="mini"
@@ -150,18 +166,18 @@
                 @selection-change="selectionChange2"
               >
                 <el-table-column type="selection" width="80"/>
-                <el-table-column prop="id" label="编号" width="150" sortable/>
-                <el-table-column prop="color" label="标签" width="250" sortable>
+                <el-table-column prop="id" label="编号" sortable/>
+                <el-table-column prop="color" label="标签" sortable>
                   <template slot-scope="scope">
                     <el-tag
                       :color="scope.row.color"
                       size="mini"
                       style="font-weight:900;font-size:13px;color: white;border-radius: 20px;"
-                    > {{ scope.row.name }} </el-tag>
+                    > <i class="el-icon-share"/>{{ scope.row.name }} </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="description" label="描述" width="250" sortable/>
-                <el-table-column prop="creation_time" label="创建时间" width="250" sortable/>
+                <el-table-column prop="description" label="描述" sortable/>
+                <el-table-column prop="creation_time" label="创建时间" sortable/>
               </el-table>
               <div class="block">
                 <el-pagination :total="total_label" layout="total"/>
@@ -173,7 +189,7 @@
   </div>
 </template>
 <script>
-import { getRepositories, deleteRepositories, pageChange } from '@/api/repositories'
+import { getRepositories, deleteRepositories, pageChange, getProject } from '@/api/repositories'
 import { getLabels, getLabelById, insertLabel, updateLabel, deleteLabel } from '@/api/label'
 export default {
   name: 'Repositories',
@@ -268,14 +284,26 @@ export default {
       page_size: 15,
       total: 0,
       total_label: 0,
-      project_id: 0
+      project_id: 0,
+      proName: '',
+      loading: true
     }
   },
   created() {
     this.selectFunc()
     this.selectLabelFunc()
+    this.getProjectName()
   },
   methods: {
+    // id查询项目
+    getProjectName() {
+      debugger
+      const _this = this
+      var id = this.project_id
+      getProject(id).then(response => {
+        _this.proName = response.data.name
+      })
+    },
     // 查询所有
     selectLabelFunc() {
       const _this = this
@@ -288,6 +316,7 @@ export default {
           var str = _this.tableData2[i].creation_time
           var date = _this.time(str)
           _this.tableData2[i].creation_time = date
+          _this.loading = false
         }
         _this.total_label = respones.total
       })
@@ -321,30 +350,61 @@ export default {
       var params = this.formLabelAlign
       insertLabel(params).then(response => {
         _this.selectLabelFunc()
+        this.formLabelAlign = {}
       })
     },
     updateLabel() {
       // debugger
-      const _this = this
-
-      this.update = false
-      var data = this.updateformLabelAlign
-      updateLabel(data).then(respones => {
-        _this.sels2 = []
-        _this.selectLabelFunc()
+      this.$confirm('此操作将作出修改, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        this.update = false
+        var data = this.updateformLabelAlign
+        updateLabel(data).then(respones => {
+          _this.sels2 = []
+          _this.selectLabelFunc()
+        })
+        this.$message({
+          type: 'success',
+          message: '修改成功'
+        })
+      }).catch(() => {
+        this.update = false
+        this.$message({
+          type: 'info',
+          message: '取消修改'
+        })
       })
     },
     deleteLabelFunc() {
-      const _this = this
-      var data = JSON.stringify(_this.sels2[0].id)
-      deleteLabel(data).then(response => {
-        _this.sels2 = []
-        _this.selectLabelFunc()
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        var data = JSON.stringify(_this.sels2[0].id)
+        deleteLabel(data).then(response => {
+          _this.sels2 = []
+          _this.selectLabelFunc()
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
       })
     },
     // 镜像仓库
     selectFunc() {
-      debugger
+      // debugger
       const _this = this
       var projectId = this.$route.params.projectId
       this.currentPage1 = 1
@@ -353,21 +413,37 @@ export default {
       getRepositories(params).then(response => {
         _this.tableData1 = response.result
         _this.total = response.total
+        _this.loading = false
       })
     },
 
     deleteFunc() {
-      const _this = this
-      var data = JSON.stringify(_this.sels1[0].name).split('"')[1].split('"')[0]
-      deleteRepositories(data).then(response => {
-        _this.CurrentChange(_this.page)
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        var data = JSON.stringify(_this.sels1[0].name).split('"')[1].split('"')[0]
+        deleteRepositories(data).then(response => {
+          _this.CurrentChange(_this.page)
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
       })
     },
     CurrentChange(val) {
       this.page = val
-      console.log(`当前页: ${val}`)
+      // console.log(`当前页: ${val}`)
       const _this = this
-      var params = { page: this.page, page_size: this.page_size }
+      var params = { page: this.page, page_size: this.page_size, project_id: this.project_id }
       pageChange(params).then(response => {
         _this.tableData1 = response.result
         _this.total = response.total
@@ -412,16 +488,15 @@ export default {
       console.log(`每页 ${val} 条`)
     },
     nameChange1: function() {
-      console.log(this.name1)
+      // console.log(this.name1)
       this.selectFunc()
     },
     nameChange2: function() {
-      console.log(this.name2)
+      // console.log(this.name2)
       this.selectLabelFunc()
     },
     goTag(projectId, repoName) {
-      debugger
-      this.$router.push({ name: 'Tag', params: { projectId: projectId, repoName: repoName }})
+      this.$router.push({ name: 'Tag', params: { pojrectId: projectId, repoName: repoName }})
     }
 
   }
