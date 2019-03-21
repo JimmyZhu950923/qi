@@ -103,8 +103,8 @@
             <el-row>
               <el-col :span="10">
                 <el-button type="primary" size="mini" round @click="getAllNsp">查询</el-button>
-                <el-button type="primary" size="mini" round @click="single = true">名字查询</el-button>
-                <el-button type="primary" size="mini" round @click="insert = true">添加</el-button>
+                <el-button type="success" size="mini" round @click="single = true">名字查询</el-button>
+                <el-button type="info" size="mini" round @click="insert = true">添加</el-button>
                 <el-dialog :visible.sync="single" title="根据name查询单个namespace" width="30%" center>
                   <el-form :label-position="labelPosition" :model="singleForm" label-width="80px">
                     <el-form-item label="name">
@@ -192,6 +192,9 @@ export default {
     this.getAllNode()
     this.getAllNsp()
   },
+  destroyed() {
+
+  },
   methods: {
     handleClick(tab, event) {
 
@@ -223,11 +226,30 @@ export default {
       })
     },
     deleteNsp(row) {
-      debugger
-      const _this = this
-      var params = row.metadata.name
-      deleteNamespace(params).then(response => {
-        _this.getAllNsp()
+      // debugger
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _this = this
+        var params = row.metadata.name
+        deleteNamespace(params).then(response => {
+          _this.getAllNsp()
+          setTimeout(() => {
+            console.log('>>>>>>>')
+            _this.getAllNsp()
+          }, 6000)
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
       })
     },
     // 查询所有node
