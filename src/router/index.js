@@ -29,47 +29,34 @@ export const constantRouterMap = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: true,
+    redirect: '/home',
+    name: 'Home',
+    // hidden: true,
     children: [{
-      path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
+      path: 'home',
+      meta: { title: '首页', icon: 'home' },
+      component: () => import('@/views/home/index')
     }]
   },
-
   {
-    path: '/example',
+    path: '/node',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    // hidden: true,
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'node',
+        name: 'Node',
+        component: () => import('@/views/node/index'),
+        meta: { title: '集群', icon: 'cluster' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'showNode/:nodeName',
+        name: 'ShowNode',
+        hidden: true,
+        meta: { title: '主机详情' },
+        component: () => import('@/views/node/showNode')
       }
-    ]
-  },
 
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
     ]
   },
   {
@@ -85,6 +72,30 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/service',
+    component: Layout,
+    children: [
+      {
+        path: 'service',
+        name: 'Service',
+        component: () => import('@/views/service/index'),
+        meta: { title: '服务', icon: 'server' }
+      }
+    ]
+  },
+  {
+    path: '/storage',
+    component: Layout,
+    children: [
+      {
+        path: 'storage',
+        name: 'Storage',
+        component: () => import('@/views/storage/index'),
+        meta: { title: '储存', icon: 'storage' }
+      }
+    ]
+  },
+  {
     path: '/pod',
     component: Layout,
     children: [
@@ -92,7 +103,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Pod',
         component: () => import('@/views/pod/index'),
-        meta: { title: 'Pod', icon: 'pods' }
+        meta: { title: '容器', icon: 'pods' }
       }
     ]
   },
@@ -109,64 +120,6 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-  {
     path: '/tag',
     component: Layout,
     hidden: true,
@@ -176,43 +129,6 @@ export const constantRouterMap = [
         name: 'Tag',
         component: () => import('@/views/tag/index'),
         meta: { title: 'Tag', icon: 'tag' }
-      }
-    ]
-  },
-
-  // {
-  //   path: '/service',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'service',
-  //       name: 'Service',
-  //       component: () => import('@/views/service/index'),
-  //       meta: { title: 'Service', icon: 'server' }
-  //     }
-  //   ]
-  // },
-
-  {
-    path: '/storage',
-    component: Layout,
-    children: [
-      {
-        path: 'storage',
-        name: 'Storage',
-        component: () => import('@/views/storage/index'),
-        meta: { title: 'Storage', icon: 'storage' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
       }
     ]
   },
@@ -227,26 +143,6 @@ export const constantRouterMap = [
         component: () => import('@/views/repositories/repositories'),
         meta: { title: '镜像仓库', icon: 'repositories' }
         // hidden: true
-      }
-
-    ]
-  },
-  {
-    path: '/node',
-    component: Layout,
-    // hidden: true,
-    children: [
-      {
-        path: 'node',
-        name: 'Node',
-        component: () => import('@/views/node/index'),
-        meta: { title: '集群', icon: 'repositories' }
-      },
-      {
-        path: 'showNode/:nodeName',
-        name: 'ShowNode',
-        hidden: true,
-        component: () => import('@/views/node/showNode')
       }
 
     ]
