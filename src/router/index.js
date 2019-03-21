@@ -29,22 +29,13 @@ export const constantRouterMap = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: true,
+    redirect: '/home',
+    name: 'Home',
+    // hidden: true,
     children: [{
-      path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
-    }]
-  },
-  {
-    path: '/home',
-    component: Layout,
-    children: [{
-      path: 'index',
-      name: 'Home',
-      component: () => import('@/views/home/index'),
-      meta: { title: '首页', icon: 'home' }
+      path: 'home',
+      meta: { title: '首页', icon: 'home' },
+      component: () => import('@/views/home/index')
     }]
   },
   {
@@ -56,12 +47,13 @@ export const constantRouterMap = [
         path: 'node',
         name: 'Node',
         component: () => import('@/views/node/index'),
-        meta: { title: '集群', icon: 'repositories' }
+        meta: { title: '集群', icon: 'cluster' }
       },
       {
         path: 'showNode/:nodeName',
         name: 'ShowNode',
         hidden: true,
+        meta: { title: '主机详情' },
         component: () => import('@/views/node/showNode')
       }
 
@@ -80,6 +72,30 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/service',
+    component: Layout,
+    children: [
+      {
+        path: 'service',
+        name: 'Service',
+        component: () => import('@/views/service/index'),
+        meta: { title: '服务', icon: 'server' }
+      }
+    ]
+  },
+  {
+    path: '/storage',
+    component: Layout,
+    children: [
+      {
+        path: 'storage',
+        name: 'Storage',
+        component: () => import('@/views/storage/index'),
+        meta: { title: '储存', icon: 'storage' }
+      }
+    ]
+  },
+  {
     path: '/pod',
     component: Layout,
     children: [
@@ -87,7 +103,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Pod',
         component: () => import('@/views/pod/index'),
-        meta: { title: 'Pod', icon: 'pods' }
+        meta: { title: '容器', icon: 'pods' }
       }
     ]
   },
@@ -116,46 +132,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
-  // {
-  //   path: '/service',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'service',
-  //       name: 'Service',
-  //       component: () => import('@/views/service/index'),
-  //       meta: { title: 'Service', icon: 'server' }
-  //     }
-  //   ]
-  // },
-<<<<<<< HEAD
-
-  {
-    path: '/storage',
-    component: Layout,
-    children: [
-      {
-        path: 'storage',
-        name: 'Storage',
-        component: () => import('@/views/storage/index'),
-        meta: { title: 'Storage', icon: 'storage' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
-=======
->>>>>>> wt delete 无用 view
   {
     path: '/Repo',
     component: Layout,

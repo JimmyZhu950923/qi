@@ -88,16 +88,19 @@
             :data="deployment"
             style="width:100%"
             stripe>
-            <el-table-column label="名称" prop="metadata.name"/>
-            <el-table-column label="READY" prop="status.readyReplicas">
-              <template slot-scope="scope">{{ scope.row.status.readyReplicas }}/{{ scope.row.status.replicas }}</template>
+            <el-table-column label="名称" prop="metadata.name" width="200"/>
+            <el-table-column label="POD" prop="status.readyReplicas">
+              <template slot-scope="scope">{{ scope.row.status.readyReplicas == undefined ? 0 :scope.row.status.readyReplicas }}/{{ scope.row.status.replicas }}</template>
             </el-table-column>
             <el-table-column label="现在" prop="status.updatedReplicas"/>
-            <el-table-column label="可用" prop="status.availableReplicas"/>
-            <el-table-column prop="metadata.creationTimestamp" label="AGE">
+            <el-table-column label="可用" prop="status.availableReplicas">
+              <template slot-scope="scope">{{ scope.row.status.availableReplicas == undefined ? 0 :scope.row.status.availableReplicas }}</template>
+            </el-table-column>
+            <el-table-column prop="metadata.creationTimestamp" label="存活时间">
               <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="命名空间" prop="metadata.namespace"/>
+            <el-table-column label="操作" width="165">
               <template slot-scope="scope">
                 <el-button type="warning" size="small" @click="replicas(scope.row)">扩缩容</el-button>
                 <el-button
@@ -113,14 +116,14 @@
       </el-tabs>
     </el-main>
 
-    <el-dialog :visible.sync="dialogVisible1" :title="currentRow.metadata.name">
+    <el-dialog :visible.sync="dialogVisible1" :title="currentRow.metadata.name" width="30%">
       <el-form :model="form">
         <el-form-item label="副本数量">
           <el-input-number v-model="form.num" :min="1" :max="10"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible1 = false">取 消</el-button>
         <el-button :disabled="currentRow.status.replicas === form.num" type="primary" @click="update">确 定</el-button>
       </span>
     </el-dialog>
@@ -308,7 +311,7 @@ export default {
         var name = this.name
         var image = this.repo.name + ':' + this.tag.name
         var num = this.num
-        var namespace = this.namespace
+        var namespace = this.namespace2
         var param = { name: name, image: image, num: num, namespace: namespace }
         createD(param).then(response => {
           this.loading2 = false

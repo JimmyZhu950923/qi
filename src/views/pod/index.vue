@@ -73,6 +73,7 @@ export default {
   },
   methods: {
     selectFunc: function() {
+      debugger
       const _this = this
       var data = {
         nameSpace: _this.namespace1
