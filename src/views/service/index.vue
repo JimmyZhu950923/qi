@@ -1,50 +1,64 @@
 <template>
   <el-form>
     <el-header style="margin-top: 25px;">
-      <el-dialog :visible.sync="dialogVisible" title="新建服务" width="30%" height="80%" round>
+      <el-dialog :visible.sync="dialogVisible" title="新建服务" width="30%" height="80%">
         <hr >
         <el-form :model="selForm" label-width="80px">
           <el-form-item label="服务名称">
-            <el-input v-model="selForm.name" class="searchClass" round/>
+            <el-input v-model="selForm.name" class="searchClass"/>
           </el-form-item>
-          <el-form-item label="命名空间">
-            <el-input v-model="selForm.namespace" class="searchClass" round/>
+          <el-form-item label="命名空间:">
+            <el-select v-model="namespace2">
+              <el-option
+                v-for="item in options4"
+                :key="item.metadata.name"
+                :label="item.metadata.name"
+                :value="item.metadata.name"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="服务类型">
+            <el-select v-model="selForm.type">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"/>
+            </el-select>
           </el-form-item>
           <el-form-item label="Port">
-            <el-input v-model="selForm.port" class="searchClass" round/>
+            <el-input v-model="selForm.port" class="searchClass"/>
           </el-form-item>
           <hr >
           <el-form-item>
-            <el-button size="small" icon="el-icon-close" round @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" size="small" icon="el-icon-check" round @click="newService()">发布</el-button>
+            <el-button size="mini" icon="el-icon-close" @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-check" @click="newService()">发布</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
       <el-row>
         <el-col :span="3">
-          <el-button type="primary" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
         </el-col>
         <el-col :span="3">
           <el-button
             :disabled="sels.length == 0"
             type="danger"
             icon="el-icon-delete"
-            round
             @click="delService"
           >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
         </el-col>
         <el-col :span="4" style="margin-left:550px">
-          <el-select v-model="plc" size="small" placeholder="请选择" @change="selchangeFunc">
+          <el-select v-model="namespace1" size="mini" @change="getAllServices">
             <el-option
-              v-for="item in options"
-              :key="item.value1"
-              :label="item.label"
-              :value="item.value1"
+              v-for="item in options4"
+              :key="item.metadata.name"
+              :label="item.metadata.name"
+              :value="item.metadata.name"
             />
           </el-select>
         </el-col>
         <el-col :span="1" style="margin-left:10px">
-          <el-button size="small" icon="el-icon-refresh" circle @click="rr"/>
+          <el-button size="mini" icon="el-icon-refresh" circle @click="rr"/>
         </el-col>
       </el-row>
     </el-header>
@@ -58,13 +72,13 @@
       >
         <el-table-column type="selection" width="40"/>
         <el-table-column prop="metadata.name" label="名称" sortable width="280"/>
-        <el-table-column prop="spec.type" label="服务类型" sortable width="220">
+        <el-table-column prop="spec.type" label="服务类型" sortable>
           <template slot-scope="s">
             {{ rag(s.row.spec.type) }}
           </template>
         </el-table-column>
-        <el-table-column prop="spec.clusterIP" label="端点" sortable width="320"/>
-        <el-table-column prop="metadata.namespace" label="命名空间" sortable width="258"/>
+        <el-table-column prop="spec.clusterIP" label="端点" sortable/>
+        <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
       </el-table>
       <el-pagination
         :current-page="currentPage"
@@ -80,10 +94,11 @@
 import { getServices } from '@/api/service'
 import { addServices } from '@/api/service'
 import { remove } from '@/api/service'
+import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
     return {
-      plc: null,
+      name: '',
       dialogVisible: false,
       tableData: [],
       sels: [],
@@ -97,28 +112,21 @@ export default {
         spec: {
           ports: [{
             port: 0
-          }]
+          }],
+          type: ''
         }
       },
-      options: [
-        {
-          value1: null,
-          label: '所有项目'
-        },
-        {
-          value1: 'default',
-          label: 'default'
-        },
-        {
-          value1: 'ingress-nginx',
-          label: 'ingress-nginx'
-        },
-        {
-          value1: 'kube-system',
-          label: 'kube-system'
-        }
-      ],
+      options: [{
+        value: 'ClusterIP',
+        label: '集群IP'
+      }, {
+        value: 'NodePort',
+        label: '节点端口'
+      }],
+      options4: [],
       stripe: true,
+      namespace1: '',
+      namespace2: 'default',
       value: '',
       pageSize: 20,
       currentPage: 1,
@@ -127,13 +135,14 @@ export default {
   },
   created() {
     this.getAllServices()
+    this.selNameSpace()
   },
   methods: {
     getAllServices: function() {
       // debugger
       const _this = this
       var data = {
-        namespace: _this.plc
+        namespace: _this.namespace1
       }
       getServices(data).then(response => {
         console.log(response)
@@ -199,17 +208,15 @@ export default {
         console.log(this.sels)
       }
     },
-    selchangeFunc: function() {
-      // debugger
-      this.getAllServices()
-    },
-    nameChange: function() {
-      // debugger
-      console.log(this.name)
-      this.getAllServices()
+    selNameSpace: function() {
+      getAllNamespace().then(response => {
+        debugger
+        this.options4 = response.data.items
+      })
     },
     rr: function() {
-      this.plc = null
+      this.namespace1 = null
+      this.namespace2 = null
       this.name = null
       this.getAllServices()
     },
@@ -229,52 +236,3 @@ export default {
   }
 }
 </script>
-<style>
-.searchClass{
-  border: 1px solid #c5c5c5;
-  border-radius: 20px;
-  background: #f4f4f4;
-}
-.searchClass .el-input-group__prepend {
-  border: none;
-  background-color: transparent;
-  padding: 0 10px 0 30px;
-}
-.searchClass .el-input-group__append {
-  border: none;
-  background-color: transparent;
-}
-.searchClass .el-input__inner {
-  height: 36px;
-  line-height: 36px;
-  border: none;
-  background-color: transparent;
-}
-.searchClass .el-icon-search{
-  font-size: 16px;
-}
-.searchClass .centerClass {
-  height: 100%;
-  line-height: 100%;
-  display: inline-block;
-  vertical-align: middle;
-  text-align: right;
-}
-.searchClass .line {
-  width: 1px;
-  height: 26px;
-  background-color: #c5c5c5;
-  margin-left: 14px;
-}
-.searchClass:hover{
-  border: 1px solid #D5E3E8;
-  background: #fff;
-}
-.searchClass:hover .line {
-  background-color: #D5E3E8;
-}
-.searchClass:hover .el-icon-search{
-  color: #409eff;
-  font-size: 16px;
-}
-</style>
