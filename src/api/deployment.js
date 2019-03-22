@@ -8,6 +8,14 @@ export function createD(data) {
   })
 }
 
+export function Single(name, namespace) {
+  return request({
+    url: 'http://localhost:8080/v1/wb/' + name,
+    method: 'get',
+    params: { namespace: namespace }
+  })
+}
+
 export function list(data) {
   return request({
     url: 'http://localhost:8080/v1/wb/',

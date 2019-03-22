@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <el-dialog :visible.sync="dialogVisible2" custom-class="dia" @close="re">
+    <el-dialog :visible.sync="dialogVisible2" @close="re">
       <span>
         <el-steps :active="active" finish-status="success" align-center>
           <el-step title="设置负载属性"/>
@@ -75,45 +75,54 @@
     </el-dialog>
     <el-main>
       <el-row>
-        <el-col :span="23">
-          <el-button type="primary" size="mini" @click="dialogVisible2 = true">新建</el-button>
+        <el-col :span="15">
+          <el-button type="primary" size="mini" round icon="el-icon-plus" @click="dialogVisible2 = true">新建</el-button>
         </el-col>
-        <el-col :span="1">
+        <el-col :span="7">
+          <el-input v-model="flag" size="mini" clearable placeholder="请输入负载名称" class="input-with-select" @clear="selectFunc">
+            <el-select slot="prepend" v-model="select" placeholder="请选择命名空间">
+              <el-option
+                v-for="item in options4"
+                :key="item.metadata.name"
+                :label="item.metadata.name"
+                :value="item.metadata.name"/>
+            </el-select>
+            <el-button slot="append" size="mini" icon="el-icon-search" @click="singleSelFunc"/>
+          </el-input>
+        </el-col>
+        <el-col :span="1" style="margin-left:10px">
           <el-button size="mini" icon="el-icon-refresh" circle @click="rr"/>
         </el-col>
       </el-row>
-      <el-tabs>
-        <el-tab-pane label="工作负载">
-          <el-table
-            :data="deployment"
-            style="width:100%"
-            stripe>
-            <el-table-column label="名称" prop="metadata.name" width="200"/>
-            <el-table-column label="POD" prop="status.readyReplicas">
-              <template slot-scope="scope">{{ scope.row.status.readyReplicas == undefined?0:scope.row.status.readyReplicas }}/{{ scope.row.status.replicas == undefined?0:scope.row.status.replicas }}</template>
-            </el-table-column>
-            <el-table-column label="现在" prop=""><template slot-scope="scope">{{ scope.row.status.updatedReplicas==undefined?0:scope.row.status.updatedReplicas }}</template></el-table-column>
-            <el-table-column label="可用" prop="status.availableReplicas">
-              <template slot-scope="scope">{{ scope.row.status.availableReplicas == undefined?0:scope.row.status.availableReplicas }}</template>
-            </el-table-column>
-            <el-table-column prop="metadata.creationTimestamp" label="存活时间">
-              <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
-            </el-table-column>
-            <el-table-column label="命名空间" prop="metadata.namespace"/>
-            <el-table-column label="操作" width="165">
-              <template slot-scope="scope">
-                <el-button type="warning" size="small" @click="replicas(scope.row)">扩缩容</el-button>
-                <el-button
-                  size="small"
-                  type="danger"
-                  @click="delFunc(scope.row.metadata)">
-                  删除
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
+
+      <el-table
+        :data="deployment"
+        style="width:100%"
+        stripe>
+        <el-table-column label="名称" prop="metadata.name" width="200" sortable/>
+        <el-table-column label="POD" prop="status.readyReplicas" sortable>
+          <template slot-scope="scope" sortable>{{ scope.row.status.readyReplicas == undefined?0:scope.row.status.readyReplicas }}/{{ scope.row.status.replicas == undefined?0:scope.row.status.replicas }}</template>
+        </el-table-column>
+        <el-table-column label="现在" prop="status.updatedReplicas" sortable><template slot-scope="scope">{{ scope.row.status.updatedReplicas==undefined?0:scope.row.status.updatedReplicas }}</template></el-table-column>
+        <el-table-column label="可用" prop="status.availableReplicas" sortable>
+          <template slot-scope="scope">{{ scope.row.status.availableReplicas == undefined?0:scope.row.status.availableReplicas }}</template>
+        </el-table-column>
+        <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable>
+          <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
+        </el-table-column>
+        <el-table-column label="命名空间" prop="metadata.namespace" sortable/>
+        <el-table-column label="操作" width="165">
+          <template slot-scope="scope">
+            <el-button type="warning" size="small" @click="replicasFun(scope.row)">扩缩容</el-button>
+            <el-button
+              size="small"
+              type="danger"
+              @click="delFunc(scope.row.metadata)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-main>
 
     <el-dialog :visible.sync="dialogVisible1" :title="currentRow.metadata.name" width="30%">
@@ -130,7 +139,7 @@
   </div>
 </template>
 <script>
-import { list, updateDep, delDep } from '@/api/deployment'
+import { list, updateDep, delDep, Single } from '@/api/deployment'
 import { getProjects } from '@/api/project'
 import { getRepositories } from '@/api/repositories'
 import { all } from '@/api/tag'
@@ -167,7 +176,10 @@ export default {
       options2: [],
       options3: [],
       options4: [],
-      namespace2: 'default'
+      namespace2: 'default',
+      namespace1: '',
+      flag: '',
+      select: ''
     }
   },
   created() {
@@ -177,6 +189,7 @@ export default {
   },
   methods: {
     selectFunc: function() {
+      debugger
       var namespace = ''
       list({ namespace: namespace }).then(response => {
         this.loading = false
@@ -197,10 +210,11 @@ export default {
         return Math.floor(age / 60 / 60 / 24) + 'd'
       }
     },
-    replicas: function(row) {
+    replicasFun: function(row) {
       this.currentRow = row
       this.form.name = row.metadata.name
       this.form.num = row.status.replicas
+      this.namespace1 = row.metadata.namespace
       this.dialogVisible1 = true
     },
     update: function() {
@@ -212,7 +226,8 @@ export default {
         this.loading1 = true
         var param = {
           name: this.form.name,
-          num: this.form.num
+          num: this.form.num,
+          namespace: this.namespace1
         }
         updateDep(param).then(response => {
           this.dialogVisible1 = false
@@ -335,7 +350,6 @@ export default {
     },
     selNameSpace: function() {
       getAllNamespace().then(response => {
-        debugger
         this.options4 = response.data.items
       })
     },
@@ -367,7 +381,28 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    singleSelFunc: function() {
+      if (this.select === '') {
+        this.$message({
+          type: 'danger',
+          message: '请选择命名空间'
+        })
+      } else {
+        this.loading = true
+        this.deployment = []
+        Single(this.flag, this.select).then(response => {
+          debugger
+          this.loading = false
+          this.deployment.push(response.data)
+        })
+      }
     }
   }
 }
 </script>
+<style>
+.input-with-select .el-input-group__prepend {
+    background-color: #fff;
+  }
+</style>

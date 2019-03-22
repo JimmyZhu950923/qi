@@ -48,10 +48,12 @@
       <el-col :span="4">
         <el-input
           v-model="name"
+          clearable
           size="mini"
           placeholder="过滤项目"
           prefix-icon="el-icon-search"
           @keyup.native="nameChange"
+          @clear="selectFunc"
         />
       </el-col>
       <el-col :span="1" style="margin-left:10px">

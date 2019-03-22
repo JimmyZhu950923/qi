@@ -22,19 +22,19 @@
           style="width:100%"
           stripe
         >
-          <el-table-column prop="metadata.name" label="实例名称" width="300"/>
-          <el-table-column prop="status.hostIP" label="READY" width="140">
+          <el-table-column sortable prop="metadata.name" label="实例名称" width="300"/>
+          <el-table-column sortable prop="status.hostIP" label="READY" width="140">
             <template slot-scope="scope">{{ getReady(scope.row.status.containerStatuses) }}/{{ scope.row.spec.containers.length }}</template>
           </el-table-column>
-          <el-table-column prop="status.phase" label="状态" width="130">
+          <el-table-column sortable prop="status.phase" label="状态" width="130">
             <template slot-scope="scope">
               <font :color="checkStatusFunc(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
             </template>
           </el-table-column>
-          <el-table-column prop="metadata.creationTimestamp" label="AGE">
+          <el-table-column sortable prop="metadata.creationTimestamp" label="AGE">
             <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
           </el-table-column>
-          <el-table-column prop="status.containerStatuses[0].restartCount" label="重启次数"/>
+          <el-table-column sortable prop="status.containerStatuses[0].restartCount" label="重启次数"/>
           <el-table-column label="操作" width="150">
             <template slot-scope="scope">
               <el-button
@@ -127,7 +127,6 @@ export default {
       }
       return 0
     },
-
     delFunc: function(metadata) {
       delPod({ name: metadata.name, namespace: metadata.namespace }).then(response => {
         this.selectFunc()
@@ -154,8 +153,3 @@ export default {
   }
 }
 </script>
-<style>
-.dia{
-  height: 500px
-}
-</style>
