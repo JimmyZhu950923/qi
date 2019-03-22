@@ -1,35 +1,30 @@
 <template>
   <el-form>
     <el-header style="margin-top: 25px;">
-      <el-dialog :visible.sync="dialogVisible" title="查询tag" width="30%" height="80%" center>
+      <el-dialog :visible.sync="dialogVisible" title="查询tag" width="35%" height="80%">
         <el-form :model="selForm" label-width="80px">
           <el-form-item label="标签">
             <el-input v-model="selForm.name" placeholder="请输入标签名"/>
           </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="small" icon="el-icon-check" @click="cliSelectFunc">确定</el-button>
-            <el-button size="small" icon="el-icon-close" @click="dialogVisible = false">取消</el-button>
-          </el-form-item>
         </el-form>
+        <span slot="footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="cliSelectFunc">确定</el-button>
+        </span>
       </el-dialog>
       <el-row>
-        <el-col :span="4">
-          <el-button type="primary" icon="el-icon-search" @click="dialogVisible = true">查询tag</el-button>
-        </el-col>
-        <el-col :span="4">
+        <el-col :span="18">
+          <el-button type="primary" size="mini" icon="el-icon-search" @click="dialogVisible = true">查询tag</el-button>
           <el-button
             :disabled="sels.length == 0"
             type="danger"
+            size="mini"
             icon="el-icon-delete"
             @click="deleteFunc"
-          >删除</el-button>
-        </el-col>
-        <el-col :span="3">
-          <el-button icon="el-icon-refresh" type="success" @click="selectFunc">刷新</el-button>
-        </el-col>
-        <el-col :span="5" style="margin-left:80px">
+          >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
+          <el-button icon="el-icon-refresh" type="success" size="mini" @click="selectFunc">&nbsp;&nbsp;刷新&nbsp;&nbsp;</el-button>
           <el-dropdown @command="addAndRemove">
-            <el-button :disabled="sels.length != 1" type="primary" @mousedown="labelsFunc">
+            <el-button :disabled="sels.length != 1" type="primary" size="mini" @mousedown="labelsFunc">
               添加标签
               <i class="el-icon-arrow-down el-icon--right"/>
             </el-button>
@@ -52,8 +47,6 @@
           </el-dropdown>
         </el-col>
       </el-row>
-    </el-header>
-    <el-main>
       <el-table
         ref="multipleTable"
         :data="tableData"
@@ -72,8 +65,8 @@
         <el-table-column prop="created" label="创建时间" sortable width="155">
           <template slot-scope="t">{{ time(t.row.created) }}</template>
         </el-table-column>
-        <el-table-column prop="docker_version" label="Docker版本" width="138" />
-        <el-table-column :show-overflow-tooltip="true" prop="labels" label="标签" width="270">
+        <el-table-column prop="docker_version" label="Docker版本"/>
+        <el-table-column :show-overflow-tooltip="true" prop="labels" label="标签">
           <template v-if="scope.row.labels.length!=0" slot-scope="scope">
             <el-tag :color="scope.row.labels[0].color" size="small" style="border-radius:20px;">
               <i class="el-icon-share"/>
@@ -98,7 +91,7 @@
         layout="total,prev,pager,next"
         @current-change="handlePageChange"
       />
-    </el-main>
+    </el-header>
   </el-form>
 </template>
 
