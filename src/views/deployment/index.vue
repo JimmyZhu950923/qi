@@ -106,7 +106,7 @@
                 <el-button
                   size="small"
                   type="danger"
-                  @click="delFunc(scope.row.metadata.name)">
+                  @click="delFunc(scope.row.metadata)">
                   删除
                 </el-button>
               </template>
@@ -318,6 +318,9 @@ export default {
           this.loading = true
           this.selectFunc()
           this.active++
+          setTimeout(() => {
+            this.selectFunc()
+          }, 3000)
         })
       }
     },
@@ -340,13 +343,13 @@ export default {
       this.loading = true
       this.selectFunc()
     },
-    delFunc: function(name) {
+    delFunc: function(metadata) {
       this.$confirm('此操作将永久删除该负载, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        var param = { name: name }
+        var param = { name: metadata.name, namespace: metadata.namespace }
         delDep(param).then(response => {
           this.loading = true
           this.selectFunc()
