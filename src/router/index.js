@@ -62,12 +62,19 @@ export const constantRouterMap = [
   {
     path: '/deploy',
     component: Layout,
+    meta: { title: '工作负载', icon: 'deployment' },
     children: [
       {
-        path: 'index',
+        path: 'deployment',
         name: 'deployment',
         component: () => import('@/views/deployment/index'),
-        meta: { title: '工作负载', icon: 'deployment' }
+        meta: { title: 'deployment' }
+      },
+      {
+        path: 'daemonset',
+        name: 'daemonset',
+        component: () => import('@/views/daemonset/index'),
+        meta: { title: 'daemonset' }
       }
     ]
   },
