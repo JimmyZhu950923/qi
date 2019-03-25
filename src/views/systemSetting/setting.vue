@@ -30,8 +30,11 @@
           <el-form-item label="密码" label-width="110px">
             <el-input v-model="form.password" type="password" size="small"/>
           </el-form-item>
+          <el-form-item label-width="110px">
+            <el-button type="primary" size="small" round @click="set"> 确定 </el-button>
+          </el-form-item>
         </el-form>
-        <el-button type="primary" size="small" round> 确定 </el-button>
+
       </el-main>
       <el-footer/>
     </el-container>
@@ -51,6 +54,14 @@ export default {
         address: 'smtp.venusource.com'
       }
     }
+  },
+  methods: {
+    set() {
+      this.$message({
+        type: 'success',
+        message: '设置成功'
+      })
+    }
   }
 }
 </script>
@@ -62,10 +73,6 @@ export default {
     .el-main {
     color: #333;
   }
-    .el-button{
-       position: relative;
-       left: 110px;
-    }
     .setting .el-input{
         width:480px;
     }

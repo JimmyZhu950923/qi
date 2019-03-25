@@ -5,9 +5,9 @@
         <el-tabs v-model="activeName">
           <el-tab-pane label="镜像仓库" name="first">
             <el-row>
-              <el-col :span="14">
-                <el-button type="primary" round size="mini" @click="selectFunc">查询</el-button>
-                <el-button :disabled="sels1.length !=1" size="mini" type="danger" round @click="deleteFunc">删除</el-button>
+              <el-col :span="15">
+                <el-button type="primary" round size="mini" icon="el-icon-search" @click="selectFunc">查询</el-button>
+                <el-button :disabled="sels1.length !=1" size="mini" type="danger" round icon="el-icon-delete" @click="deleteFunc">删除</el-button>
               </el-col>
               <el-col :span="2" :offset="2">
                 <el-popover
@@ -28,9 +28,11 @@
               <el-col :span="4">
                 <el-input
                   v-model="name1"
+                  :clearable="true"
                   size="mini"
                   placeholder="过滤镜像仓库"
                   prefix-icon="el-icon-search"
+                  @clear="selectFunc"
                   @keyup.native="nameChange1"
                 />
               </el-col>
@@ -70,14 +72,15 @@
           <el-tab-pane label="标签" name="second">
             <el-row>
               <el-col :span="18">
-                <el-button class="button" type="success" size="mini" round @click="single = true">编号查询</el-button>
-                <el-button class="button" type="primary" size="mini" round @click="selectLabelFunc">查询</el-button>
-                <el-button class="button" type="info" size="mini" round @click="dialogVisible=true">添加</el-button>
+                <el-button class="button" type="success" size="mini" round icon="el-icon-search" @click="single = true">编号查询</el-button>
+                <el-button class="button" type="primary" size="mini" round icon="el-icon-search" @click="selectLabelFunc">查询</el-button>
+                <el-button class="button" type="info" size="mini" round icon="el-icon-plus" @click="dialogVisible=true">添加</el-button>
                 <el-button
                   :disabled="sels2.length!=1"
                   class="button"
                   type="warning"
                   size="mini"
+                  icon="el-icon-edit"
                   round
                   @click="update=true"
                 >修改</el-button>
@@ -86,6 +89,7 @@
                   class="button"
                   type="danger"
                   size="mini"
+                  icon="el-icon-delete"
                   round
                   @click="deleteLabelFunc"
                 >删除</el-button>
@@ -93,9 +97,11 @@
               <el-col :span="4">
                 <el-input
                   v-model="name2"
+                  :clearable="true"
                   size="mini"
                   placeholder="过滤标签"
                   prefix-icon="el-icon-search"
+                  @clear="selectLabelFunc"
                   @keyup.native="nameChange2"
                 />
               </el-col>
@@ -506,9 +512,6 @@ export default {
 .el-header > p {
   float: left;
   font-size: 15px;
-}
-.el-autocomplete {
-  float: right;
 }
 .block {
   float: left;
