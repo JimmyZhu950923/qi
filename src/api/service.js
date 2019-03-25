@@ -10,9 +10,9 @@ export function getServices(data) {
 }
 export function getSingle(namespace, name) {
   return request({
-    url: 'http://127.0.0.1:8080/v1/service/single',
+    url: 'http://127.0.0.1:8080/v1/service/' + namespace,
     method: 'get',
-    params: { name: name, namespace: namespace }
+    params: { name: name }
   })
 }
 // 增
