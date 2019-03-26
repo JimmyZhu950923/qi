@@ -42,12 +42,12 @@
             size="mini"
             icon="el-icon-delete"
             round
-            @click="delService"
+            @click="delService()"
           >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
         </el-col>
         <el-col :span="7">
-          <el-input v-model="name" size="mini" placeholder="请输入名称" class="input-with-select">
-            <el-select slot="prepend" v-model="namespace1" size="mini" placeholder="请选择" @change="getAllServices">
+          <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
+            <el-select slot="prepend" v-model="namespace1" size="mini" placeholder="请选择" @change="getAllServices()">
               <el-option
                 v-for="item in options4"
                 :key="item.metadata.name"
@@ -55,11 +55,11 @@
                 :value="item.metadata.name"
               />
             </el-select>
-            <el-button slot="append" size="mini" icon="el-icon-search" @click="nameChange"/>
+            <el-button slot="append" size="mini" icon="el-icon-search" @click="nameChange()"/>
           </el-input>
         </el-col>
         <el-col :span="1" style="margin-left:10px">
-          <el-button size="mini" icon="el-icon-refresh" circle @click="rr"/>
+          <el-button size="mini" icon="el-icon-refresh" circle @click="rr()"/>
         </el-col>
       </el-row>
       <el-table
@@ -67,7 +67,7 @@
         stripe
         width="100%"
         highlight-current-row
-        @selection-change="handleSelectionChange"
+        @selection-change="handleSelectionChange()"
       >
         <el-table-column type="selection" width="40"/>
         <el-table-column prop="metadata.name" label="名称" sortable width="280"/>
@@ -91,10 +91,7 @@
 </template>
 
 <script>
-import { getServices } from '@/api/service'
-import { getSingle } from '@/api/service'
-import { addServices } from '@/api/service'
-import { remove } from '@/api/service'
+import { getServices, getSingle, addServices, remove } from '@/api/service'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
@@ -152,7 +149,7 @@ export default {
       })
     },
     getSingleService: function() {
-      debugger
+      // debugger
       const _this = this
       if (_this.namespace1 === '') {
         _this.$message({
@@ -174,7 +171,7 @@ export default {
       this.getSingleService()
     },
     newService: function() {
-      debugger
+      // debugger
       const _this = this
       var name = this.selForm.name
       var namespace = this.selForm.namespace
