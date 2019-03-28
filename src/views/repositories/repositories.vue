@@ -502,7 +502,7 @@ export default {
       this.selectLabelFunc()
     },
     goTag(projectId, repoName) {
-      this.$router.push({ name: 'Tag', params: { pojrectId: projectId, repoName: repoName }})
+      this.$router.push({ name: 'Tag', params: { projectId: projectId, repoName: repoName }})
     }
 
   }
