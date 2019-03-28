@@ -24,10 +24,10 @@ export function addServices(name, namespace, type, port) {
   })
 }
 // 删
-export function remove(name, namespace) {
+export function remove(data) {
   return request({
     url: 'http://127.0.0.1:8080/v1/service',
     method: 'delete',
-    params: { name: name, namespace: namespace }
+    params: data
   })
 }

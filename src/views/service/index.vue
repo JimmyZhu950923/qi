@@ -36,14 +36,6 @@
       <el-row>
         <el-col :span="15">
           <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
-          <el-button
-            :disabled="sels.length == 0"
-            type="danger"
-            size="mini"
-            icon="el-icon-delete"
-            round
-            @click="delService()"
-          >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
         </el-col>
         <el-col :span="7">
           <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
@@ -67,9 +59,7 @@
         stripe
         width="100%"
         highlight-current-row
-        @selection-change="handleSelectionChange()"
       >
-        <el-table-column type="selection" width="40"/>
         <el-table-column prop="metadata.name" label="名称" sortable width="280"/>
         <el-table-column prop="spec.type" label="服务类型" sortable>
           <template slot-scope="s">
@@ -78,6 +68,16 @@
         </el-table-column>
         <el-table-column prop="spec.clusterIP" label="端点" sortable/>
         <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
+        <el-table-column label="操作" width="165">
+          <template slot-scope="scope">
+            <el-button
+              size="small"
+              type="danger"
+              @click="delService(scope.row.metadata)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
         :current-page="currentPage"
@@ -190,20 +190,21 @@ export default {
         _this.getAllServices()
       })
     },
-    delService: function() {
+    delService: function(metadata) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          // debugger
-          const _this = this
-          var ts = _this.sels
-          console.log(ts)
-          ts.forEach((item) => {
-            console.log(item)
-            _this.SingleDelFunc(item.metadata.name, item.metadata.namespace)
+          debugger
+          var data = { name: metadata.name, namespace: metadata.namespace }
+          remove(data).then(response => {
+            this.getAllServices()
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
           })
         })
         .catch(() => {
@@ -212,23 +213,6 @@ export default {
             message: '已取消删除'
           })
         })
-    },
-    SingleDelFunc: function(name, namespace) {
-      // debugger
-      const _this = this
-      remove(name, namespace).then(response => {
-        _this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
-        _this.getAllServices()
-      })
-    },
-    handleSelectionChange: function(val) {
-      if (val != null) {
-        this.sels = val
-        console.log(this.sels)
-      }
     },
     selNameSpace: function() {
       getAllNamespace().then(response => {
