@@ -1,6 +1,7 @@
 import Vue from 'vue'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
+import ECharts from '/Users/zhuhaoxian/web/vue/echarts.min.js'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -25,7 +26,7 @@ import '@/permission' // permission control
  */
 import '../mock' // simulation data
 
-Vue.use(ElementUI, { locale })
+Vue.use(ElementUI, { locale }, ECharts)
 
 Vue.config.productionTip = false
 
