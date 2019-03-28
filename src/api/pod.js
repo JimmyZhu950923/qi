@@ -23,3 +23,11 @@ export function delPod(data) {
     params: data
   })
 }
+
+export function getPod(params) {
+  return request({
+    url: 'http://127.0.0.1:8080/v1/pods/singlePod',
+    method: 'get',
+    params
+  })
+}

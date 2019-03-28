@@ -80,7 +80,7 @@
         </el-col>
         <el-col :span="7">
           <el-input v-model="flag" size="mini" clearable placeholder="请输入负载名称" class="input-with-select" @clear="selectFunc">
-            <el-select slot="prepend" v-model="select" placeholder="命名空间">
+            <el-select slot="prepend" v-model="select" placeholder="命名空间" @change="selectFunc">
               <el-option
                 v-for="item in options4"
                 :key="item.metadata.name"
@@ -99,7 +99,11 @@
         :data="deployment"
         style="width:100%"
         stripe>
-        <el-table-column label="名称" prop="metadata.name" width="200" sortable/>
+        <el-table-column label="名称" prop="metadata.name" width="200" sortable>
+          <template slot-scope="scope">
+            <a @click="goRouter(scope.row.metadata)">{{ scope.row.metadata.name }}</a>
+          </template>
+        </el-table-column>
         <el-table-column label="POD" prop="status.readyReplicas" sortable>
           <template slot-scope="scope" sortable>{{ scope.row.status.readyReplicas == undefined?0:scope.row.status.readyReplicas }}/{{ scope.row.status.replicas == undefined?0:scope.row.status.replicas }}</template>
         </el-table-column>
@@ -111,9 +115,15 @@
           <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
         </el-table-column>
         <el-table-column label="命名空间" prop="metadata.namespace" sortable/>
-        <el-table-column label="操作" width="165">
+        <el-table-column label="操作" width="240">
           <template slot-scope="scope">
-            <el-button type="warning" size="small" @click="replicasFun(scope.row)">扩缩容</el-button>
+            <el-button
+              type="primary"
+              size="small"
+              @click="getSingleD(scope.row.metadata)">
+              查看
+            </el-button>
+            <el-button type="warning" size="small" @click="replicasFun(scope.row)">伸缩</el-button>
             <el-button
               size="small"
               type="danger"
@@ -134,6 +144,21 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1 = false">取 消</el-button>
         <el-button :disabled="currentRow.status.replicas === form.num" type="primary" @click="update">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      :visible.sync="dialogVisible3"
+      title="修改容器组"
+      width="50%">
+      <el-input
+        :rows="15"
+        v-model="pods"
+        type="textarea"
+        placeholder="请输入内容"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="text" @click="dialogVisible3 = false">取 消</el-button>
+        <el-button type="text" @click="dialogVisible3 = false">复 制</el-button>
       </span>
     </el-dialog>
   </div>
@@ -166,6 +191,7 @@ export default {
       },
       dialogVisible1: false,
       dialogVisible2: false,
+      dialogVisible3: false,
       active: 0,
       pro: {},
       repo: {},
@@ -179,7 +205,7 @@ export default {
       namespace2: 'default',
       namespace1: '',
       flag: '',
-      select: ''
+      select: 'default'
     }
   },
   created() {
@@ -190,7 +216,7 @@ export default {
   methods: {
     selectFunc: function() {
       debugger
-      var namespace = ''
+      var namespace = this.select
       list({ namespace: namespace }).then(response => {
         this.loading = false
         this.deployment = response.data.items
@@ -399,6 +425,16 @@ export default {
           }
         })
       }
+    },
+    goRouter: function(metadata) {
+      this.$router.push({ name: 'Pod1', params: { name: metadata.name, namespace: metadata.namespace }})
+    },
+    getSingleD(metadata) {
+      const _this = this
+      Single(metadata.name, metadata.namespace).then(response => {
+        _this.dialogVisible3 = true
+        _this.pods = JSON.stringify(response.data, null, 4)
+      })
     }
   }
 }

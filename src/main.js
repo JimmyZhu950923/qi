@@ -15,6 +15,8 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import 'echarts'
+
 /**
  * This project originally used easy-mock to simulate data,
  * but its official service is very unstable,

@@ -68,13 +68,13 @@ export const constantRouterMap = [
         path: 'deployment',
         name: 'deployment',
         component: () => import('@/views/deployment/index'),
-        meta: { title: 'deployment' }
+        meta: { title: '部署' }
       },
       {
         path: 'daemonset',
         name: 'daemonset',
         component: () => import('@/views/daemonset/index'),
-        meta: { title: 'daemonset' }
+        meta: { title: '守护进程集' }
       }
     ]
   },
@@ -105,11 +105,18 @@ export const constantRouterMap = [
   {
     path: '/pod',
     component: Layout,
+    hidden: true,
     children: [
       {
-        path: 'index',
-        name: 'Pod',
-        component: () => import('@/views/pod/index'),
+        path: 'index1/:name/:namespace',
+        name: 'Pod1',
+        component: () => import('@/views/pod/index1'),
+        meta: { title: '容器', icon: 'pods' }
+      },
+      {
+        path: 'index2/:name/:namespace',
+        name: 'Pod2',
+        component: () => import('@/views/pod/index2'),
         meta: { title: '容器', icon: 'pods' }
       }
     ]
