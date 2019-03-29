@@ -78,7 +78,14 @@ export const constantRouterMap = [
       {
         path: 'service',
         name: 'Service',
-        component: () => import('@/views/service/index'),
+        component: () => import('@/views/service/index1'),
+        meta: { title: '服务', icon: 'server' }
+      },
+      {
+        path: 'service2/:name/:namespace',
+        name: 'Service2',
+        hidden: true,
+        component: () => import('@/views/service/index2'),
         meta: { title: '服务', icon: 'server' }
       }
     ]
