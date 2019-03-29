@@ -145,7 +145,7 @@ export default {
       // debugger
       const _this = this
       var data = {
-        namespace: _this.namespace1
+        namespace: _this.namespace2
       }
       getServices(data).then(response => {
         console.log(response)
@@ -156,13 +156,13 @@ export default {
     getSingleService: function() {
       // debugger
       const _this = this
-      if (_this.namespace1 === '') {
+      if (_this.namespace2 === '') {
         _this.$message({
           type: 'danger',
           message: '请先选择命名空间'
         })
       } else {
-        var namespace = _this.namespace1
+        var namespace = _this.namespace2
         var name = _this.name
         _this.tableData = []
         getSingle(namespace, name).then(response => {
@@ -226,8 +226,8 @@ export default {
       })
     },
     rr: function() {
-      this.namespace = null
       this.namespace1 = null
+      this.namespace2 = null
       this.name = null
       this.port = null
       this.getAllServices()
