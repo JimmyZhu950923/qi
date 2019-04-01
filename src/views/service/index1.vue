@@ -78,7 +78,7 @@
               <el-button
                 size="small"
                 type="primary"
-                @click="getService(scope.row.metadata)">
+                @click="getOneService(scope.row.metadata)">
                 查看
               </el-button>
               <el-button
@@ -90,15 +90,15 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
+        <!-- <el-pagination
           :current-page="currentPage"
           :total="countPage"
           :page-size="pageSize"
           layout="total,prev,pager,next"
           @current-change="handlePageChange"
-        />
+        /> -->
         <el-dialog
-          :visible.sync="dialogVisible"
+          :visible.sync="dialogVisible1"
           title="修改服务"
           width="50%">
           <el-input
@@ -107,8 +107,8 @@
             type="textarea"
             placeholder="请输入内容"/>
           <span slot="footer" class="dialog-footer">
-            <el-button type="text" @click="dialogVisible = false">取 消</el-button>
-            <el-button type="text" @click="dialogVisible = false">复 制</el-button>
+            <el-button type="text" @click="dialogVisible1 = false">取 消</el-button>
+            <el-button type="text" @click="dialogVisible1 = false">复 制</el-button>
             <el-button type="text" @click="updateService()">更 新</el-button>
           </span>
         </el-dialog>
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { getServices, getSingle, addServices, remove, update, getSer } from '@/api/service'
+import { getServices, getSingle, addServices, remove, update } from '@/api/service'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
@@ -126,6 +126,7 @@ export default {
       name: '',
       namespace: '',
       dialogVisible: false,
+      dialogVisible1: false,
       services: '',
       tableData: [],
       sels: [],
@@ -196,13 +197,13 @@ export default {
         })
       }
     },
-    getService: function(metadata) {
-      debugger
+    getOneService: function(metadata) {
+      // debugger
       const _this = this
-      var data = { namespace: metadata.namespace, name: metadata.name }
-      console.log(data)
-      getSer(data).then(response => {
-        _this.dialogVisible = true
+      var name = metadata.name
+      var namespace = metadata.namespace
+      getSingle(namespace, name).then(response => {
+        _this.dialogVisible1 = true
         _this.services = JSON.stringify(response.data, null, 4)
       })
     },
@@ -300,10 +301,10 @@ export default {
       }
       return result
     },
-    handlePageChange: function(page) {
-      this.currentPage = page
-      this.getAllServices()
-    },
+    // handlePageChange: function(page) {
+    //   this.currentPage = page
+    //   this.getAllServices()
+    // },
     goIndex2(name, namespace) {
       this.$router.push({ name: 'Service2', params: { name: name, namespace: namespace }})
     }

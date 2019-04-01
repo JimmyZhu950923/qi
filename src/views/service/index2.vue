@@ -1,7 +1,7 @@
 <template>
   <div class="Show">
     <el-container>
-      <el-main>
+      <el-main v-loading="loading">
         <el-tabs>
           <el-tab-pane label="详情">
             <el-row>
@@ -61,7 +61,7 @@ export default {
       serviceName: '',
       serviceNamespace: '',
       annotaions: '',
-      creationTimestamp: '',
+      creattionTimestamp: '',
       serviceType: '',
       keepConversation: '',
       clusterIP: '',
@@ -76,11 +76,10 @@ export default {
   },
   methods: {
     selS: function() {
-      // debugger
       this.serviceName = this.$route.params.name
       this.serviceNamespace = this.$route.params.namespace
       getSingle(this.serviceNamespace, this.serviceName).then(response => {
-        // debugger
+        debugger
         this.serviceName = response.data.metadata.name
         this.serviceNamespace = response.data.metadata.namespace
         this.serviceType = response.data.spec.type
@@ -100,8 +99,8 @@ export default {
         serviceNamespace: _this.serviceNamespace
       }
       getServices(data).then(response => {
-        // debugger
         _this.serviceData = response.data.item
+        _this.loading = false
       })
     },
     time1: function(tm) {

@@ -15,13 +15,6 @@ export function getSingle(namespace, name) {
     params: { name: name }
   })
 }
-export function getSer(params) {
-  return request({
-    url: 'http://127.0.0.1:8080/v1/service/' + name,
-    method: 'get',
-    params: { namespace: params.namespace }
-  })
-}
 // 增
 export function addServices(name, namespace, type, port) {
   return request({
