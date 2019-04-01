@@ -14,9 +14,6 @@
               <el-form-item label="负载名称:">
                 <el-input v-model="name"/>
               </el-form-item>
-              <el-form-item label="副本数量:">
-                <el-input-number v-model="num" :min="1" :max="10" label="描述文字"/>
-              </el-form-item>
               <el-form-item label="命名空间:">
                 <el-select v-model="namespace2" placeholder="请选择">
                   <el-option
@@ -96,7 +93,7 @@
       </el-row>
 
       <el-table
-        :data="deployment"
+        :data="daemonset"
         style="width:100%"
         stripe>
         <el-table-column label="名称" prop="metadata.name" width="200" sortable>
@@ -104,12 +101,18 @@
             <a @click="goRouter(scope.row.metadata)">{{ scope.row.metadata.name }}</a>
           </template>
         </el-table-column>
-        <el-table-column label="POD" prop="status.readyReplicas" sortable>
-          <template slot-scope="scope" sortable>{{ scope.row.status.readyReplicas == undefined?0:scope.row.status.readyReplicas }}/{{ scope.row.status.replicas == undefined?0:scope.row.status.replicas }}</template>
+        <el-table-column label="期望" prop="status.desiredNumberScheduled" sortable>
+          <template slot-scope="scope" sortable>{{ scope.row.status.desiredNumberScheduled == undefined?0:scope.row.status.desiredNumberScheduled }}</template>
         </el-table-column>
-        <el-table-column label="现在" prop="status.updatedReplicas" sortable><template slot-scope="scope">{{ scope.row.status.updatedReplicas==undefined?0:scope.row.status.updatedReplicas }}</template></el-table-column>
-        <el-table-column label="可用" prop="status.availableReplicas" sortable>
-          <template slot-scope="scope">{{ scope.row.status.availableReplicas == undefined?0:scope.row.status.availableReplicas }}</template>
+        <el-table-column label="当前" prop="status.currentNumberScheduled" sortable>
+          <template slot-scope="scope" sortable>{{ scope.row.status.currentNumberScheduled == undefined?0:scope.row.status.currentNumberScheduled }}</template>
+        </el-table-column>
+        <el-table-column label="准备" prop="status.numberReady" sortable>
+          <template slot-scope="scope" sortable>{{ scope.row.status.numberReady == undefined?0:scope.row.status.numberReady }}</template>
+        </el-table-column>
+        <el-table-column label="现在" prop="status.updatedNumberScheduled" sortable><template slot-scope="scope">{{ scope.row.status.updatedNumberScheduled==undefined?0:scope.row.status.updatedNumberScheduled }}</template></el-table-column>
+        <el-table-column label="可用" prop="status.numberAvailable" sortable>
+          <template slot-scope="scope">{{ scope.row.status.numberAvailable == undefined?0:scope.row.status.numberAvailable }}</template>
         </el-table-column>
         <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable>
           <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
@@ -123,7 +126,7 @@
               @click="getSingleD(scope.row.metadata)">
               查看
             </el-button>
-            <el-button type="warning" size="small" @click="replicasFun(scope.row)">伸缩</el-button>
+            <el-button type="warning" size="small" @click="replicasFun(scope.row)">扩缩容</el-button>
             <el-button
               size="small"
               type="danger"
@@ -164,11 +167,10 @@
   </div>
 </template>
 <script>
-import { list, updateDep, delDep, Single } from '@/api/deployment'
+import { createD, list, updateDae, delDae, Single } from '@/api/daemonset'
 import { getProjects } from '@/api/project'
 import { getRepositories } from '@/api/repositories'
 import { all } from '@/api/tag'
-import { createD } from '@/api/deployment'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
@@ -176,7 +178,7 @@ export default {
       loading: true,
       loading1: false,
       loading2: false,
-      deployment: [],
+      daemonset: [],
       form: {
         name: '',
         num: 0
@@ -219,7 +221,7 @@ export default {
       var namespace = this.select
       list({ namespace: namespace }).then(response => {
         this.loading = false
-        this.deployment = response.data.items
+        this.daemonset = response.data.items
       })
     },
     time: function(tm) {
@@ -255,7 +257,7 @@ export default {
           num: this.form.num,
           namespace: this.namespace1
         }
-        updateDep(param).then(response => {
+        updateDae(param).then(response => {
           this.dialogVisible1 = false
           this.loading1 = false
           this.loading = true
@@ -390,7 +392,7 @@ export default {
         type: 'warning'
       }).then(() => {
         var param = { name: metadata.name, namespace: metadata.namespace }
-        delDep(param).then(response => {
+        delDae(param).then(response => {
           this.loading = true
           this.selectFunc()
           this.$message({
@@ -399,7 +401,7 @@ export default {
           })
           setTimeout(() => {
             this.selectFunc()
-          }, 3000)
+          }, 4000)
         })
       }).catch(() => {
         this.$message({
@@ -416,18 +418,18 @@ export default {
         })
       } else {
         this.loading = true
-        this.deployment = []
+        this.daemonset = []
         Single(this.flag, this.select).then(response => {
           if (response.data !== undefined) {
             debugger
             this.loading = false
-            this.deployment.push(response.data)
+            this.daemonset.push(response.data)
           }
         })
       }
     },
     goRouter: function(metadata) {
-      this.$router.push({ name: 'Pod1', params: { name: metadata.name, namespace: metadata.namespace }})
+      this.$router.push({ name: 'Pod2', params: { name: metadata.name, namespace: metadata.namespace }})
     },
     getSingleD(metadata) {
       const _this = this
