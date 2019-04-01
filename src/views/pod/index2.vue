@@ -206,6 +206,7 @@ export default {
       })
     },
     getSinglePod(metadata) {
+      debugger
       const _this = this
       var params = { podName: metadata.name, namespace: metadata.namespace }
       console.log(params)
