@@ -128,6 +128,7 @@ export default {
       dialogVisible: false,
       dialogVisible1: false,
       services: '',
+      service: '',
       tableData: [],
       sels: [],
       input: '',
@@ -204,6 +205,7 @@ export default {
       var namespace = metadata.namespace
       getSingle(namespace, name).then(response => {
         _this.dialogVisible1 = true
+        _this.service = response.data
         _this.services = JSON.stringify(response.data, null, 4)
       })
     },
@@ -257,22 +259,22 @@ export default {
     updateService: function() {
       debugger
       const _this = this
-      var name = _this.services
-      var namespace = JSON.parse(_this.services).metadata.namespace
+      var name = JSON.parse(_this.services)
+      var namespace = _this.service.metadata.namespace
       this.$confirm('此操作将作出修改, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         update(name, namespace).then(response => {
-          _this.dialogVisible = false
+          _this.dialogVisible1 = false
           this.$message({
             type: 'success',
             message: '修改成功'
           })
         })
       }).catch(() => {
-        _this.dialogVisible = false
+        _this.dialogVisible1 = false
         this.$message({
           type: 'info',
           message: '取消修改'
