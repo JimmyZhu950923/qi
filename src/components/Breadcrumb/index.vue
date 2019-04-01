@@ -44,6 +44,26 @@ export default {
             { path: '/center/project', meta: { title: '镜像中心' }},
             { path: '/Repo/repositories/' + this.$route.params.projectId, meta: { title: '镜像仓库' }}
           ].concat(matched)
+        } else if (first && first.name === 'ShowNode') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/node/node', meta: { title: '集群' }}
+          ].concat(matched)
+        } else if (first && first.name === 'Pod1') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/deploy/deployment', meta: { title: '部署' }}
+          ].concat(matched)
+        } else if (first && first.name === 'Pod2') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/deploy/daemonset', meta: { title: '守护进程集' }}
+          ].concat(matched)
+        } else if (first && first.name === 'Service2') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/service/service', meta: { title: '服务' }}
+          ].concat(matched)
         } else {
           matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched)
         }
