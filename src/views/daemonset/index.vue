@@ -126,7 +126,6 @@
               @click="getSingleD(scope.row.metadata)">
               查看
             </el-button>
-            <el-button type="warning" size="small" @click="replicasFun(scope.row)">扩缩容</el-button>
             <el-button
               size="small"
               type="danger"
@@ -138,30 +137,19 @@
       </el-table>
     </el-main>
 
-    <el-dialog :visible.sync="dialogVisible1" :title="currentRow.metadata.name" width="30%">
-      <el-form :model="form">
-        <el-form-item label="副本数量">
-          <el-input-number v-model="form.num" :min="1" :max="10"/>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible1 = false">取 消</el-button>
-        <el-button :disabled="currentRow.status.replicas === form.num" type="primary" @click="update">确 定</el-button>
-      </span>
-    </el-dialog>
-
     <el-dialog
       :visible.sync="dialogVisible3"
-      title="修改容器组"
+      title="修改 部署"
       width="50%">
       <el-input
         :rows="15"
-        v-model="pods"
+        v-model="daemonsetSTR"
         type="textarea"
         placeholder="请输入内容"/>
       <span slot="footer" class="dialog-footer">
         <el-button type="text" @click="dialogVisible3 = false">取 消</el-button>
         <el-button type="text" @click="dialogVisible3 = false">复 制</el-button>
+        <el-button type="text" @click="update">更 新</el-button>
       </span>
     </el-dialog>
   </div>
@@ -207,7 +195,8 @@ export default {
       namespace2: 'default',
       namespace1: '',
       flag: '',
-      select: 'default'
+      select: 'default',
+      daemonsetSTR: ''
     }
   },
   created() {
@@ -238,42 +227,27 @@ export default {
         return Math.floor(age / 60 / 60 / 24) + 'd'
       }
     },
-    replicasFun: function(row) {
-      this.currentRow = row
-      this.form.name = row.metadata.name
-      this.form.num = row.status.replicas
-      this.namespace1 = row.metadata.namespace
-      this.dialogVisible1 = true
-    },
     update: function() {
-      this.$confirm('此操作将修改副本数量, 是否继续?', '提示', {
+      const _this = this
+      var name = _this.daemonsetSTR
+      var nameSpace = JSON.parse(_this.daemonsetSTR).metadata.namespace
+      this.$confirm('此操作将作出修改, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.loading1 = true
-        var param = {
-          name: this.form.name,
-          num: this.form.num,
-          namespace: this.namespace1
-        }
-        updateDae(param).then(response => {
-          this.dialogVisible1 = false
-          this.loading1 = false
-          this.loading = true
-          this.selectFunc()
+        updateDae({ name: name, namespace: nameSpace }).then(response => {
+          _this.dialogVisible = false
           this.$message({
             type: 'success',
             message: '修改成功'
           })
-          setTimeout(() => {
-            this.selectFunc()
-          }, 3000)
         })
       }).catch(() => {
+        _this.dialogVisible = false
         this.$message({
           type: 'info',
-          message: '已取消删除'
+          message: '取消修改'
         })
       })
     },
@@ -435,7 +409,7 @@ export default {
       const _this = this
       Single(metadata.name, metadata.namespace).then(response => {
         _this.dialogVisible3 = true
-        _this.pods = JSON.stringify(response.data, null, 4)
+        _this.daemonsetSTR = JSON.stringify(response.data, null, 4)
       })
     }
   }

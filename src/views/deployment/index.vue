@@ -149,16 +149,17 @@
 
     <el-dialog
       :visible.sync="dialogVisible3"
-      title="修改容器组"
+      title="修改 守护进程集"
       width="50%">
       <el-input
         :rows="15"
-        v-model="pods"
+        v-model="deploymentSTR"
         type="textarea"
         placeholder="请输入内容"/>
       <span slot="footer" class="dialog-footer">
         <el-button type="text" @click="dialogVisible3 = false">取 消</el-button>
         <el-button type="text" @click="dialogVisible3 = false">复 制</el-button>
+        <el-button type="text" @click="update1">更 新</el-button>
       </span>
     </el-dialog>
   </div>
@@ -177,6 +178,7 @@ export default {
       loading1: false,
       loading2: false,
       deployment: [],
+      deploymentSTR: '',
       form: {
         name: '',
         num: 0
@@ -271,7 +273,31 @@ export default {
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '已取消删除'
+          message: '取消修改'
+        })
+      })
+    },
+    update1: function() {
+      const _this = this
+      var name = _this.deploymentSTR
+      var nameSpace = JSON.parse(_this.deploymentSTR).metadata.namespace
+      this.$confirm('此操作将作出修改, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        updateDep({ name: name, namespace: nameSpace }).then(response => {
+          _this.dialogVisible = false
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+        })
+      }).catch(() => {
+        _this.dialogVisible = false
+        this.$message({
+          type: 'info',
+          message: '取消修改'
         })
       })
     },
@@ -433,7 +459,7 @@ export default {
       const _this = this
       Single(metadata.name, metadata.namespace).then(response => {
         _this.dialogVisible3 = true
-        _this.pods = JSON.stringify(response.data, null, 4)
+        _this.deploymentSTR = JSON.stringify(response.data, null, 4)
       })
     }
   }
