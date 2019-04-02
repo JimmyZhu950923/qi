@@ -1,101 +1,124 @@
 <template>
   <div>
-    <el-main>
-      <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%">
-        <el-form :model="selForm" label-width="80px">
-          <el-form-item label="服务名称">
-            <el-input v-model="selForm.name" class="searchClass" />
-          </el-form-item>
-          <el-form-item label="命名空间:">
-            <el-select v-model="selForm.namespace1">
-              <el-option
-                v-for="item in options4"
-                :key="item.metadata.name"
-                :label="item.metadata.name"
-                :value="item.metadata.name"/>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="服务类型">
-            <el-select v-model="selForm.type">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"/>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="Port">
-            <el-input v-model="selForm.port" class="searchClass"/>
-          </el-form-item>
-        </el-form>
-        <span slot="footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="newService()">发布</el-button>
-        </span>
-      </el-dialog>
-      <el-row>
-        <el-col :span="15">
-          <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
-        </el-col>
-        <el-col :span="7">
-          <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
-            <el-select slot="prepend" v-model="namespace2" size="mini" placeholder="请选择" @change="getAllServices()">
-              <el-option
-                v-for="item in options4"
-                :key="item.metadata.name"
-                :label="item.metadata.name"
-                :value="item.metadata.name"
-              />
-            </el-select>
-            <el-button slot="append" size="mini" icon="el-icon-search" @click="nameChange()"/>
-          </el-input>
-        </el-col>
-        <el-col :span="1" style="margin-left:10px">
-          <el-button size="mini" icon="el-icon-refresh" circle @click="rr()"/>
-        </el-col>
-      </el-row>
-      <el-table
-        :data="tableData"
-        stripe
-        width="100%"
-        highlight-current-row
-      >
-        <el-table-column prop="metadata.name" label="名称" sortable width="280" >
-          <template slot-scope="scope">
-            <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
-          </template>
-        </el-table-column>
-        <el-table-column prop="spec.type" label="服务类型" sortable>
-          <template slot-scope="s">
-            {{ rag(s.row.spec.type) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="spec.clusterIP" label="端点" sortable/>
-        <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
-        <el-table-column label="操作" width="165">
-          <template slot-scope="scope">
-            <el-button
-              size="small"
-              type="danger"
-              @click="delService(scope.row.metadata)">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        :current-page="currentPage"
-        :total="countPage"
-        :page-size="pageSize"
-        layout="total,prev,pager,next"
-        @current-change="handlePageChange"
-      />
-    </el-main>
+    <el-container>
+      <el-main>
+        <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%">
+          <el-form :model="selForm" label-width="80px">
+            <el-form-item label="服务名称">
+              <el-input v-model="selForm.name" class="searchClass" />
+            </el-form-item>
+            <el-form-item label="命名空间:">
+              <el-select v-model="selForm.namespace1">
+                <el-option
+                  v-for="item in options4"
+                  :key="item.metadata.name"
+                  :label="item.metadata.name"
+                  :value="item.metadata.name"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="服务类型">
+              <el-select v-model="selForm.type">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="Port">
+              <el-input v-model="selForm.port" class="searchClass"/>
+            </el-form-item>
+          </el-form>
+          <span slot="footer">
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="newService()">发布</el-button>
+          </span>
+        </el-dialog>
+        <el-row>
+          <el-col :span="15">
+            <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
+          </el-col>
+          <el-col :span="7">
+            <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
+              <el-select slot="prepend" v-model="namespace2" size="mini" placeholder="请选择" @change="getAllServices()">
+                <el-option
+                  v-for="item in options4"
+                  :key="item.metadata.name"
+                  :label="item.metadata.name"
+                  :value="item.metadata.name"
+                />
+              </el-select>
+              <el-button slot="append" size="mini" icon="el-icon-search" @click="nameChange()"/>
+            </el-input>
+          </el-col>
+          <el-col :span="1" style="margin-left:10px">
+            <el-button size="mini" icon="el-icon-refresh" circle @click="rr()"/>
+          </el-col>
+        </el-row>
+        <el-table
+          :data="tableData"
+          stripe
+          width="100%"
+          highlight-current-row
+        >
+          <el-table-column prop="metadata.name" label="名称" sortable width="280" >
+            <template slot-scope="scope">
+              <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
+            </template>
+          </el-table-column>
+          <el-table-column prop="spec.type" label="服务类型" sortable>
+            <template slot-scope="s">
+              {{ rag(s.row.spec.type) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="spec.clusterIP" label="端点" sortable/>
+          <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
+          <el-table-column label="操作" width="165">
+            <template slot-scope="scope">
+              <el-button
+                size="small"
+                type="primary"
+                @click="getOneService(scope.row.metadata)">
+                查看
+              </el-button>
+              <el-button
+                size="small"
+                type="danger"
+                @click="delService(scope.row.metadata)">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- <el-pagination
+          :current-page="currentPage"
+          :total="countPage"
+          :page-size="pageSize"
+          layout="total,prev,pager,next"
+          @current-change="handlePageChange"
+        /> -->
+        <el-dialog
+          :visible.sync="dialogVisible1"
+          title="修改服务"
+          width="50%">
+          <el-input
+            :rows="15"
+            v-model="services"
+            type="textarea"
+            placeholder="请输入内容"/>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="text" @click="dialogVisible1 = false">取 消</el-button>
+            <el-button type="text" @click="dialogVisible1 = false">复 制</el-button>
+            <el-button type="text" @click="updateService()">更 新</el-button>
+          </span>
+        </el-dialog>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
 <script>
-import { getServices, getSingle, addServices, remove } from '@/api/service'
+import { getServices, getSingle, addServices, remove, update } from '@/api/service'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
@@ -103,6 +126,9 @@ export default {
       name: '',
       namespace: '',
       dialogVisible: false,
+      dialogVisible1: false,
+      services: '',
+      service: '',
       tableData: [],
       sels: [],
       input: '',
@@ -172,6 +198,17 @@ export default {
         })
       }
     },
+    getOneService: function(metadata) {
+      // debugger
+      const _this = this
+      var name = metadata.name
+      var namespace = metadata.namespace
+      getSingle(namespace, name).then(response => {
+        _this.dialogVisible1 = true
+        _this.service = response.data
+        _this.services = JSON.stringify(response.data, null, 4)
+      })
+    },
     nameChange: function() {
       this.getSingleService()
     },
@@ -219,6 +256,31 @@ export default {
           })
         })
     },
+    updateService: function() {
+      debugger
+      const _this = this
+      var name = JSON.parse(_this.services)
+      var namespace = _this.service.metadata.namespace
+      this.$confirm('此操作将作出修改, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        update(name, namespace).then(response => {
+          _this.dialogVisible1 = false
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+        })
+      }).catch(() => {
+        _this.dialogVisible1 = false
+        this.$message({
+          type: 'info',
+          message: '取消修改'
+        })
+      })
+    },
     selNameSpace: function() {
       getAllNamespace().then(response => {
         // debugger
@@ -241,10 +303,10 @@ export default {
       }
       return result
     },
-    handlePageChange: function(page) {
-      this.currentPage = page
-      this.getAllServices()
-    },
+    // handlePageChange: function(page) {
+    //   this.currentPage = page
+    //   this.getAllServices()
+    // },
     goIndex2(name, namespace) {
       this.$router.push({ name: 'Service2', params: { name: name, namespace: namespace }})
     }

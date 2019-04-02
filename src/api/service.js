@@ -31,3 +31,11 @@ export function remove(data) {
     params: data
   })
 }
+// 更新
+export function update(name, namespace) {
+  return request({
+    url: 'http://127.0.0.1:8080/v1/service',
+    method: 'put',
+    params: { name: name, namespace: namespace }
+  })
+}
