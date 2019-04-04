@@ -6,31 +6,7 @@
           <el-tab-pane label="主机" name="first">
             <el-row>
               <el-col :span="15">
-                <el-button type="primary" round size="mini" icon="el-icon-plus" @click="addNew = true">新建</el-button>
                 <el-button size="mini" type="success" round icon="el-icon-plus" @click="addNode = true">添加节点</el-button>
-                <el-dialog
-                  :visible.sync="addNew"
-                  title="新建集群"
-                  width="40%"
-                >
-                  <span>
-                    <el-form ref="form" :model="form" label-width="80px">
-                      <el-form-item label="集群名称">
-                        <el-input v-model="form.name"/>
-                      </el-form-item>
-                      <el-form-item label="集群类型">
-                        <el-radio-group v-model="form.resource">
-                          <el-radio label="test8067"/>
-                          <el-radio label="done02632"/>
-                        </el-radio-group>
-                      </el-form-item>
-                    </el-form>
-                  </span>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="addNew = false">取 消</el-button>
-                    <el-button type="primary" @click="addNew = false">确 定</el-button>
-                  </span>
-                </el-dialog>
                 <el-dialog
                   :visible.sync="addNode"
                   title="添加节点"
@@ -55,7 +31,9 @@
               <el-table-column
                 prop="status.addresses[0].address"
                 label="名称">
-                <template slot-scope="scope"><font color="#2995d7">{{ scope.row.metadata.name }}</font></template>
+                <template slot-scope="scope"><font color="#2995d7">
+                  <a @click="selectRow(scope.row.metadata.name)">{{ scope.row.metadata.name }}</a>
+                </font></template>
               </el-table-column>
               <el-table-column
                 prop="status.conditions[3].status"
@@ -145,10 +123,6 @@ export default {
   name: 'Node',
   data() {
     return {
-      form: {
-        name: '',
-        resource: 'test8067'
-      },
       singleForm: {
         name: ''
       },
@@ -156,7 +130,6 @@ export default {
         name: ''
       },
       addNode: false,
-      addNew: false,
       activeName: 'first',
       tableData: [],
       name1: '',
@@ -164,7 +137,8 @@ export default {
       loading: true,
       namespaceData: [],
       insert: false,
-      labelPosition: 'right'
+      labelPosition: 'right',
+      namespace: ''
     }
   },
   created() {
@@ -232,9 +206,10 @@ export default {
     },
     // 查询所有node
     getAllNode() {
+      debugger
+      this.namespace = this.$route.params.namespace
       const _this = this
       getNodes().then(response => {
-        // debugger
         _this.tableData = response.data.items
         _this.loading = false
       })
@@ -301,7 +276,7 @@ export default {
       return str
     },
     selectRow(nodeName) {
-      this.$router.push({ name: 'ShowNode', params: { nodeName: nodeName }})
+      this.$router.push({ name: 'ShowNode', params: { nodeName: nodeName, namespace: this.namespace }})
     },
     handleCommand(command) {
       if (command === 'b') {

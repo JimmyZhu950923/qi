@@ -39,22 +39,29 @@ export const constantRouterMap = [
     }]
   },
   {
-    path: '/node',
+    path: '/cluster',
     component: Layout,
     // hidden: true,
     children: [
       {
-        path: 'node',
-        name: 'Node',
-        component: () => import('@/views/node/index'),
+        path: 'cluster',
+        name: 'Cluster',
+        component: () => import('@/views/cluster/cluster'),
         meta: { title: '集群', icon: 'cluster' }
       },
       {
-        path: 'showNode/:nodeName',
+        path: 'node/:name',
+        name: 'Node',
+        hidden: true,
+        component: () => import('@/views/cluster/node'),
+        meta: { title: 'Node', icon: 'cluster' }
+      },
+      {
+        path: 'showNode/:name/:nodeName',
         name: 'ShowNode',
         hidden: true,
         meta: { title: '主机详情' },
-        component: () => import('@/views/node/showNode')
+        component: () => import('@/views/cluster/showNode')
       }
 
     ]

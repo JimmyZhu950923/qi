@@ -47,7 +47,13 @@ export default {
         } else if (first && first.name === 'ShowNode') {
           matched = [
             { path: '/home', meta: { title: '首页' }},
-            { path: '/node/node', meta: { title: '集群' }}
+            { path: '/cluster/cluster', meta: { title: '集群' }},
+            { path: '/cluster/node/' + this.$route.params.name, meta: { title: 'Node' }}
+          ].concat(matched)
+        } else if (first && first.name === 'Node') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/cluster/cluster', meta: { title: '集群' }}
           ].concat(matched)
         } else if (first && first.name === 'Pod1') {
           matched = [
