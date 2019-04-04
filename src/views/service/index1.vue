@@ -2,13 +2,13 @@
   <div>
     <el-container>
       <el-main>
-        <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%">
-          <el-form :model="selForm" :ref="selForm" rules="rules" status-icon label-width="80px">
+        <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%" @close="close('selForm')">
+          <el-form ref="selForm" :model="selForm" :rules="rules" status-icon label-width="80px">
             <el-form-item label="服务名称" prop="name">
-              <el-input v-model="selForm.metadata.name" class="searchClass" auto-complete="off" clearable/>
+              <el-input v-model="selForm.name" class="searchClass" auto-complete="off" clearable/>
             </el-form-item>
             <el-form-item label="命名空间" prop="namespace1">
-              <el-select v-model="selForm.metadata.namespace1">
+              <el-select v-model="selForm.namespace1">
                 <el-option
                   v-for="item in options4"
                   :key="item.metadata.name"
@@ -17,7 +17,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="服务类型" prop="type">
-              <el-select v-model="selForm.spec.type">
+              <el-select v-model="selForm.type">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -28,12 +28,12 @@
             <el-form-item
               label="端点"
               prop="port">
-              <el-input v-model.number="selForm.spec.ports.port" class="searchClass" auto-complete="off" clearable/>
+              <el-input v-model.number="selForm.port" class="searchClass" auto-complete="off" clearable/>
             </el-form-item>
           </el-form>
           <span slot="footer">
-            <el-button @click="resetForm(selForm)">取消</el-button>
-            <el-button :disabled="selForm.metadata.name == ''" type="primary" @click="newService()">发布</el-button>
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button :disabled="selForm.name == ''" type="primary" @click="newService()">发布</el-button>
           </span>
         </el-dialog>
         <el-dialog :visible.sync="dialogVisible2" title="新建服务" width="35%" height="80%">
@@ -138,12 +138,30 @@ import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
     var checkPort = (rule, value, callback) => {
-      debugger
-      if (Number.isInteger(Number(value)) && Number(value) > 0) {
-        callback()
-      } else {
-        callback(new Error('请输入有效数字'))
+      // debugger
+      if (!value) {
+        callback(new Error('请输入端点'))
       }
+      if (!Number.isInteger(value)) {
+        callback(new Error('请输入数字值'))
+      } else {
+        callback()
+      }
+    }
+    var checkName = (rule, value, callback) => {
+      // debugger
+      if (!value) {
+        return callback(new Error('请输入名称'))
+      }
+      // debugger
+      getSingle(this.selForm.namespace1, value).then(response => {
+        // debugger
+        if (response.data === undefined) {
+          callback()
+        } else {
+          callback(new Error('服务名称重复'))
+        }
+      })
     }
     return {
       name: '',
@@ -159,16 +177,10 @@ export default {
       input: '',
       selection: true,
       selForm: {
-        metadata: {
-          name: '',
-          namespace: ''
-        },
-        spec: {
-          ports: [{
-            port: 0
-          }],
-          type: ''
-        }
+        name: '',
+        namespace1: 'default',
+        port: '',
+        type: ''
       },
       selForm1: {},
       options: [{
@@ -181,13 +193,22 @@ export default {
       options4: [],
       stripe: true,
       namespace1: '',
-      namespace2: '',
+      namespace2: 'default',
       value: '',
       pageSize: 20,
       currentPage: 1,
       countPage: 0,
       rules: {
-        age: [
+        name: [
+          { required: true, validator: checkName, trigger: 'blur' }
+        ],
+        namespace1: [
+          { required: true, message: '请必须选择命名空间', trigger: 'change' }
+        ],
+        type: [
+          { required: true, message: '请必须选择服务类型', trigger: 'change' }
+        ],
+        port: [
           { required: true, validator: checkPort, trigger: 'blur' }
         ]
       }
@@ -247,25 +268,33 @@ export default {
     newService: function() {
       // debugger
       const _this = this
-      var name = _this.selForm.metadata.name
-      var namespace = _this.selForm.metadata.namespace1
-      var type = _this.selForm.spec.type
-      var port = _this.selForm.spec.ports.port
-      addServices(name, namespace, type, port).then(response => {
-        _this.$message({
-          type: 'success',
-          message: '新建成功!'
-        })
-        _this.dialogVisible = false
-        _this.selForm.metadata.name = ''
-        _this.selForm.metadata.namespace1 = ''
-        _this.selForm.spec.type = ''
-        _this.selForm.spec.ports.port = 0
-        _this.getAllServices()
+      this.$refs['selForm'].validate((valid) => {
+        if (valid) {
+          var name = _this.selForm.name
+          var namespace = _this.selForm.namespace1
+          var type = _this.selForm.type
+          var port = _this.selForm.port
+          addServices(name, namespace, type, port).then(response => {
+            _this.$message({
+              type: 'success',
+              message: '新建成功!'
+            })
+            _this.dialogVisible = false
+            _this.selForm.name = ''
+            _this.selForm.namespace1 = ''
+            _this.selForm.type = ''
+            _this.selForm.port = 0
+            this.$refs['selForm'].resetFields()
+            _this.getAllServices()
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
     createService: function() {
-      debugger
+      // debugger
       const _this = this
       var service1 = _this.textarea
       var namespace = _this.namespace2
@@ -362,9 +391,8 @@ export default {
       }
       return result
     },
-    resetForm(formName) {
+    close(formName) {
       this.$refs[formName].resetFields()
-      this.dialogVisible = false
     },
     // handlePageChange: function(page) {
     //   this.currentPage = page
