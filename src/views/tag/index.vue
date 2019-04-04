@@ -1,30 +1,10 @@
 <template>
   <el-form>
     <el-header style="margin-top: 25px;">
-      <el-dialog :visible.sync="dialogVisible" title="查询tag" width="35%" height="80%">
-        <el-form :model="selForm" label-width="80px">
-          <el-form-item label="标签">
-            <el-input v-model="selForm.name" placeholder="请输入标签名"/>
-          </el-form-item>
-        </el-form>
-        <span slot="footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="cliSelectFunc">确定</el-button>
-        </span>
-      </el-dialog>
       <el-row>
         <el-col :span="18">
-          <el-button type="primary" size="mini" icon="el-icon-search" @click="dialogVisible = true">查询tag</el-button>
-          <el-button
-            :disabled="sels.length == 0"
-            type="danger"
-            size="mini"
-            icon="el-icon-delete"
-            @click="deleteFunc"
-          >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
-          <el-button icon="el-icon-refresh" type="success" size="mini" @click="selectFunc">&nbsp;&nbsp;刷新&nbsp;&nbsp;</el-button>
           <el-dropdown @command="addAndRemove">
-            <el-button :disabled="sels.length != 1" type="primary" size="mini" @mousedown="labelsFunc">
+            <el-button :disabled="sels.length != 1" type="primary" size="mini" round @mousedown="labelsFunc">
               添加标签
               <i class="el-icon-arrow-down el-icon--right"/>
             </el-button>
@@ -45,6 +25,29 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+          <el-button
+            :disabled="sels.length == 0"
+            type="danger"
+            size="mini"
+            round
+            icon="el-icon-delete"
+            @click="deleteFunc"
+          >&nbsp;&nbsp;删除&nbsp;&nbsp;</el-button>
+        </el-col>
+        <el-col :span="4">
+          <el-input
+            v-model="name"
+            disabled
+            clearable
+            size="mini"
+            placeholder="过滤项目"
+            prefix-icon="el-icon-search"
+            @keyup.native="nameChange"
+            @clear="selectFunc"
+          />
+        </el-col>
+        <el-col :span="1" style="margin-left:10px">
+          <el-button size="mini" icon="el-icon-refresh" circle @click="rr"/>
         </el-col>
       </el-row>
       <el-table
@@ -109,6 +112,7 @@ export default {
       tableData: [],
       sels: [],
       input: '',
+      name: '',
       selForm: {
         author: '',
         created: '',
@@ -141,26 +145,28 @@ export default {
       })
     },
     selectFunc: function() {
+      // debugger
       const _this = this
       var repoName = this.$route.params.repoName
       this.repoName = repoName
-      all(this.repoName).then(response => {
+      var data = {
+        repoName: repoName,
+        name: _this.selForm.name
+      }
+      all(data).then(response => {
         _this.tableData = response.result
         console.log(_this.tableData)
         _this.countPage = response.result.length
       })
     },
-    cliSelectFunc: function() {
-      this.currentPage = 1
+    namechange: function() {
       this.selectFunc()
-      this.dialogVisible = false
     },
     handleSelectionChange: function(val) {
       debugger
       if (val != null) {
         this.sels = val
         console.log(this.sels)
-        // this.value5 = val[0].labels
       }
     },
     deleteFunc: function() {
@@ -253,6 +259,10 @@ export default {
       add(label_id, tag_name, this.repoName).then(response => {
         _this.selectFunc()
       })
+    },
+    rr: function() {
+      this.name = null
+      this.selectFunc()
     },
     addAndRemove: function(selectedId) {
       const _this = this

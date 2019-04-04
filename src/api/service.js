@@ -23,6 +23,13 @@ export function addServices(name, namespace, type, port) {
     params: { name: name, namespace: namespace, type: type, port: port }
   })
 }
+export function createYaml(service1, namespace) {
+  return request({
+    url: 'http://127.0.0.1:8080/v1/service/' + namespace,
+    method: 'post',
+    data: service1
+  })
+}
 // 删
 export function remove(data) {
   return request({

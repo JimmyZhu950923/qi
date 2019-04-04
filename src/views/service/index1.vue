@@ -3,12 +3,12 @@
     <el-container>
       <el-main>
         <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%">
-          <el-form :model="selForm" label-width="80px">
-            <el-form-item label="服务名称">
-              <el-input v-model="selForm.name" class="searchClass" />
+          <el-form :model="selForm" :ref="selForm" rules="rules" status-icon label-width="80px">
+            <el-form-item label="服务名称" prop="name">
+              <el-input v-model="selForm.metadata.name" class="searchClass" auto-complete="off" clearable/>
             </el-form-item>
-            <el-form-item label="命名空间:">
-              <el-select v-model="selForm.namespace1">
+            <el-form-item label="命名空间" prop="namespace1">
+              <el-select v-model="selForm.metadata.namespace1">
                 <el-option
                   v-for="item in options4"
                   :key="item.metadata.name"
@@ -16,8 +16,8 @@
                   :value="item.metadata.name"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="服务类型">
-              <el-select v-model="selForm.type">
+            <el-form-item label="服务类型" prop="type">
+              <el-select v-model="selForm.spec.type">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -25,18 +25,33 @@
                   :value="item.value"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="Port">
-              <el-input v-model="selForm.port" class="searchClass"/>
+            <el-form-item
+              label="端点"
+              prop="port">
+              <el-input v-model.number="selForm.spec.ports.port" class="searchClass" auto-complete="off" clearable/>
             </el-form-item>
           </el-form>
           <span slot="footer">
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="newService()">发布</el-button>
+            <el-button @click="resetForm(selForm)">取消</el-button>
+            <el-button :disabled="selForm.metadata.name == ''" type="primary" @click="newService()">发布</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog :visible.sync="dialogVisible2" title="新建服务" width="35%" height="80%">
+          <el-input
+            :rows="12"
+            v-model="textarea"
+            type="textarea"
+            clearable
+            placeholder="填入 YAML 或 JSON 文件内容，将指定资源部署到当前所选命名空间。"/>
+          <span slot="footer">
+            <el-button @click="dialogVisible2 = false">取消</el-button>
+            <el-button :disabled="textarea.length == 0" type="primary" @click="createService()">发布</el-button>
           </span>
         </el-dialog>
         <el-row>
           <el-col :span="15">
-            <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible = true">简单新建</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible2 = true">yaml新建</el-button>
           </el-col>
           <el-col :span="7">
             <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
@@ -118,17 +133,27 @@
 </template>
 
 <script>
-import { getServices, getSingle, addServices, remove, update } from '@/api/service'
+import { getServices, getSingle, addServices, createYaml, remove, update } from '@/api/service'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
+    var checkPort = (rule, value, callback) => {
+      debugger
+      if (Number.isInteger(Number(value)) && Number(value) > 0) {
+        callback()
+      } else {
+        callback(new Error('请输入有效数字'))
+      }
+    }
     return {
       name: '',
       namespace: '',
       dialogVisible: false,
       dialogVisible1: false,
+      dialogVisible2: false,
       services: '',
       service: '',
+      textarea: '',
       tableData: [],
       sels: [],
       input: '',
@@ -145,6 +170,7 @@ export default {
           type: ''
         }
       },
+      selForm1: {},
       options: [{
         value: 'ClusterIP',
         label: '集群IP'
@@ -159,7 +185,12 @@ export default {
       value: '',
       pageSize: 20,
       currentPage: 1,
-      countPage: 0
+      countPage: 0,
+      rules: {
+        age: [
+          { required: true, validator: checkPort, trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
@@ -204,6 +235,7 @@ export default {
       var name = metadata.name
       var namespace = metadata.namespace
       getSingle(namespace, name).then(response => {
+        // debugger
         _this.dialogVisible1 = true
         _this.service = response.data
         _this.services = JSON.stringify(response.data, null, 4)
@@ -215,21 +247,48 @@ export default {
     newService: function() {
       // debugger
       const _this = this
-      var name = this.selForm.name
-      var namespace = this.selForm.namespace1
-      var type = this.selForm.type
-      var port = this.selForm.port
+      var name = _this.selForm.metadata.name
+      var namespace = _this.selForm.metadata.namespace1
+      var type = _this.selForm.spec.type
+      var port = _this.selForm.spec.ports.port
       addServices(name, namespace, type, port).then(response => {
         _this.$message({
           type: 'success',
           message: '新建成功!'
         })
         _this.dialogVisible = false
-        _this.selForm.name = ''
-        _this.selForm.namespace = ''
-        _this.selForm.type = ''
-        _this.selForm.port = 0
+        _this.selForm.metadata.name = ''
+        _this.selForm.metadata.namespace1 = ''
+        _this.selForm.spec.type = ''
+        _this.selForm.spec.ports.port = 0
         _this.getAllServices()
+      })
+    },
+    createService: function() {
+      debugger
+      const _this = this
+      var service1 = _this.textarea
+      var namespace = _this.namespace2
+      this.$confirm('此操作将创建, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        createYaml(service1, namespace).then(response => {
+          _this.dialogVisible2 = false
+          _this.textarea = ''
+          _this.getAllServices()
+          this.$message({
+            type: 'success',
+            message: '新建成功'
+          })
+        })
+      }).catch(() => {
+        _this.dialogVisible2 = false
+        this.$message({
+          type: 'info',
+          message: '取消修改'
+        })
       })
     },
     delService: function(metadata) {
@@ -257,7 +316,7 @@ export default {
         })
     },
     updateService: function() {
-      debugger
+      // debugger
       const _this = this
       var name = JSON.parse(_this.services)
       var namespace = _this.service.metadata.namespace
@@ -302,6 +361,10 @@ export default {
         result = '节点端口'
       }
       return result
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      this.dialogVisible = false
     },
     // handlePageChange: function(page) {
     //   this.currentPage = page
