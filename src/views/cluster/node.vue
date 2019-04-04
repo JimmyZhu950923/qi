@@ -70,8 +70,14 @@
                 <el-button type="success" size="mini" round icon="el-icon-plus" @click="insert = true">添加</el-button>
                 <el-button type="primary" size="mini" round icon="el-icon-refresh" @click="getAllNsp">刷新</el-button>
                 <el-dialog :visible.sync="insert" title="添加namespace" width="30%">
-                  <el-form :label-position="labelPosition" :model="insertForm" label-width="80px">
-                    <el-form-item label="name">
+                  <el-form ref="insertForm" :label-position="labelPosition" :model="insertForm" label-width="80px">
+                    <el-form-item
+                      :rules="[
+                        { required: true, validator: validateName, trigger: 'blur' }
+                      ]"
+                      label="name"
+                      prop="name"
+                      autocomplete="off">
                       <el-input v-model="insertForm.name" />
                     </el-form-item>
                   </el-form>
@@ -176,11 +182,17 @@ export default {
       })
     },
     addNsp() {
-      const _this = this
-      this.insert = false
-      var params = { name: _this.insertForm.name }
-      addNamespace(params).then(response => {
-        _this.getAllNsp()
+      this.$refs['insertForm'].validate((valid) => {
+        if (valid) {
+          const _this = this
+          this.insert = false
+          var params = { name: _this.insertForm.name }
+          addNamespace(params).then(response => {
+            _this.getAllNsp()
+          })
+        } else {
+          return false
+        }
       })
     },
     deleteNsp(row) {
@@ -280,6 +292,19 @@ export default {
     },
     nameChange() {
       this.getNsp()
+    },
+    validateName(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('name不能为空'))
+      }
+
+      getNamespace(value).then(response => {
+        if (response.data === undefined) {
+          return callback()
+        } else {
+          return callback(new Error('name重复'))
+        }
+      })
     }
   }
 }

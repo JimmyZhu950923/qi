@@ -10,9 +10,13 @@
         </el-steps>
         <el-main v-loading="loading2">
           <div v-if="active === 0" style="height:243px">
-            <el-form label-width="80px">
-              <el-form-item label="负载名称:">
-                <el-input v-model="name"/>
+            <el-form ref="deployForm" :model="deploymentForm" label-width="83px">
+              <el-form-item
+                :rules="[{ required: true, validator: validateName, trigger: 'blur' }]"
+                prop="name"
+                label="负载名称:"
+                autocomplete="off">
+                <el-input v-model="deploymentForm.name"/>
               </el-form-item>
               <el-form-item label="副本数量:">
                 <el-input-number v-model="num" :min="1" :max="10" label="描述文字"/>
@@ -75,8 +79,11 @@
     </el-dialog>
     <el-main>
       <el-row>
-        <el-col :span="15">
+        <el-col :span="2">
           <el-button type="primary" size="mini" round icon="el-icon-plus" @click="dialogVisible2 = true">新建</el-button>
+        </el-col>
+        <el-col :span="13">
+          <el-button type="primary" size="mini" round icon="el-icon-plus" @click="dialogVisible4 = true">从文本输入框创建</el-button>
         </el-col>
         <el-col :span="7">
           <el-input v-model="flag" size="mini" clearable placeholder="请输入负载名称" class="input-with-select" @clear="selectFunc">
@@ -149,7 +156,7 @@
 
     <el-dialog
       :visible.sync="dialogVisible3"
-      title="修改 守护进程集"
+      title="修改 部署"
       width="50%">
       <el-input
         :rows="15"
@@ -162,14 +169,25 @@
         <el-button type="text" @click="update1">更 新</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog :visible.sync="dialogVisible4" title="填入 YAML 或 JSON 文件内容，将指定资源部署到当前所选命名空间。" width="50%">
+      <el-input
+        :rows="15"
+        v-model="deploymentSTR1"
+        type="textarea"
+        placeholder="请填入yaml或json"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible4 = false">取 消</el-button>
+        <el-button :disabled="deploymentSTR1 === ''" type="primary" @click="create">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { list, updateDep, delDep, Single } from '@/api/deployment'
+import { list, updateDep, delDep, Single, createD, createDYaml } from '@/api/deployment'
 import { getProjects } from '@/api/project'
 import { getRepositories } from '@/api/repositories'
 import { all } from '@/api/tag'
-import { createD } from '@/api/deployment'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
@@ -179,6 +197,7 @@ export default {
       loading2: false,
       deployment: [],
       deploymentSTR: '',
+      deploymentSTR1: '',
       form: {
         name: '',
         num: 0
@@ -194,12 +213,15 @@ export default {
       dialogVisible1: false,
       dialogVisible2: false,
       dialogVisible3: false,
+      dialogVisible4: false,
       active: 0,
       pro: {},
       repo: {},
       tag: {},
+      deploymentForm: {
+        name: ''
+      },
       num: 1,
-      name: '',
       options1: [],
       options2: [],
       options3: [],
@@ -313,10 +335,13 @@ export default {
     },
     next: function() {
       const _this = this
-      if (this.active === 0 && this.name === '') {
-        _this.$message({
-          type: 'warning',
-          message: '请输入负载名称!'
+      if (this.active === 0) {
+        _this.$refs['deployForm'].validate((valid) => {
+          if (valid) {
+            _this.active++
+          } else {
+            return false
+          }
         })
       } else if (this.active === 1) {
         if (_this.pro.project_id !== undefined) {
@@ -375,7 +400,7 @@ export default {
         })
       } else {
         this.loading2 = true
-        var name = this.name
+        var name = this.deploymentForm.name
         var image = this.repo.name + ':' + this.tag.name
         var num = this.num
         var namespace = this.namespace2
@@ -392,9 +417,10 @@ export default {
       }
     },
     re: function() {
+      this.$refs['deployForm'].resetFields()
       this.dialogVisible2 = false
       this.namespace2 = 'default'
-      this.name = ''
+      this.deploymentForm.name = ''
       this.pro = {}
       this.repo = {}
       this.tag = {}
@@ -460,6 +486,36 @@ export default {
       Single(metadata.name, metadata.namespace).then(response => {
         _this.dialogVisible3 = true
         _this.deploymentSTR = JSON.stringify(response.data, null, 4)
+      })
+    },
+    create: function() {
+      const _this = this
+      debugger
+      var namespace = this.select
+      var deployment = this.deploymentSTR1
+      console.log(deployment)
+      createDYaml(namespace, deployment).then(response => {
+        _this.dialogVisible4 = false
+        _this.deploymentSTR1 = ''
+        _this.selectFunc()
+        _this.$message({
+          type: 'success',
+          message: '创建成功!'
+        })
+      })
+    },
+    validateName: function(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('负载名称不能为空'))
+      }
+      Single(value, this.namespace2).then(response => {
+        if (response.data !== undefined) {
+          if (response.data.metadata.name === value) {
+            return callback(new Error('负载名字重复'))
+          }
+        } else {
+          return callback()
+        }
       })
     }
   }

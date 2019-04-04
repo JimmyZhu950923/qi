@@ -249,6 +249,7 @@ export default {
       var params = { podName: metadata.name, namespace: metadata.namespace }
       console.log(params)
       getPod(params).then(response => {
+        debugger
         _this.dialogVisible = true
         _this.pods = JSON.stringify(response.data, null, 4)
       })

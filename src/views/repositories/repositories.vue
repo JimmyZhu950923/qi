@@ -116,12 +116,12 @@
                   <el-button type="primary" @click="FindSingle">确 定</el-button>
                 </span>
               </el-dialog>
-              <el-dialog :visible.sync="dialogVisible" title="添加标签" width="30%">
-                <el-form :label-position="labelPosition" :model="formLabelAlign" label-width="80px">
-                  <el-form-item label="标签名字">
+              <el-dialog :visible.sync="dialogVisible" title="添加标签" width="30%" @close="close">
+                <el-form ref="labelName" :label-position="labelPosition" :model="formLabelAlign" :rules="rules" label-width="80px">
+                  <el-form-item label="标签名字" prop="name" autocomplete="off">
                     <el-input v-model="formLabelAlign.name"/>
                   </el-form-item>
-                  <el-form-item label="标签颜色">
+                  <el-form-item label="标签颜色" prop="color" autocomplete="off">
                     <div class="block">
                       <el-color-picker v-model="formLabelAlign.color" :predefine="predefineColors"/>
                     </div>
@@ -132,7 +132,7 @@
                 </el-form>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="dialogVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="addLabel">确 定</el-button>
+                  <el-button type="primary" @click="addLabel('labelName')">确 定</el-button>
                 </span>
               </el-dialog>
               <el-dialog :visible.sync="update" title="修改标签" width="30%">
@@ -200,6 +200,25 @@ import { getLabels, getLabelById, insertLabel, updateLabel, deleteLabel } from '
 export default {
   name: 'Repositories',
   data() {
+    var validateName = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('标签名称不能为空'))
+      }
+      var params = { name: value, project_id: this.project_id }
+      getLabels(params).then(response => {
+        if (response.total === 0) {
+          return callback()
+        } else {
+          for (var project in response.json) {
+            if (response.json[project].name === value) {
+              return callback(new Error('标签名字重复'))
+            } else {
+              return callback()
+            }
+          }
+        }
+      })
+    }
     return {
       // 预定颜色
       predefineColors: [
@@ -292,7 +311,11 @@ export default {
       total_label: 0,
       project_id: 0,
       proName: '',
-      loading: true
+      loading: true,
+      rules: {
+        name: [{ required: true, validator: validateName, trigger: 'blur' }],
+        color: [{ required: true, message: '颜色未选择', trigger: 'blur' }]
+      }
     }
   },
   created() {
@@ -350,13 +373,20 @@ export default {
       })
     },
 
-    addLabel() {
+    addLabel(formName) {
       const _this = this
-      this.dialogVisible = false
-      var params = this.formLabelAlign
-      insertLabel(params).then(response => {
-        _this.selectLabelFunc()
-        this.formLabelAlign = {}
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.dialogVisible = false
+          var params = this.formLabelAlign
+          insertLabel(params).then(response => {
+            _this.selectLabelFunc()
+            this.formLabelAlign = {}
+            this.$refs[formName].resetFields()
+          })
+        } else {
+          return false
+        }
       })
     },
     updateLabel() {
@@ -503,6 +533,12 @@ export default {
     },
     goTag(projectId, repoName) {
       this.$router.push({ name: 'Tag', params: { projectId: projectId, repoName: repoName }})
+    },
+    close() {
+      debugger
+      this.formLabelAlign.name = null
+      this.formLabelAlign.color = null
+      this.$refs['labelName'].resetFields()
     }
 
   }
