@@ -45,7 +45,9 @@
             </el-row><br>
             <el-row>
               <el-col :span="4">内部端点:</el-col>
-              <el-col :span="20">{{ innerPort }}</el-col>
+              <el-col :span="20">
+                <el-tag v-for="(label) in innerPort" :key="label.a">{{ serviceName }}:{{ label.port }} {{ label.protocol }}</el-tag>
+              </el-col>
             </el-row><br>
           </el-tab-pane>
         </el-tabs>
@@ -54,14 +56,15 @@
   </div>
 </template>
 <script>
-import { getServices, getSingle } from '@/api/service'
+import { getSingle } from '@/api/service'
 export default {
   data() {
     return {
+      loading: true,
       serviceName: '',
       serviceNamespace: '',
       annotaions: '',
-      creattionTimestamp: '',
+      creationTimestamp: '',
       serviceType: '',
       keepConversation: '',
       clusterIP: '',
@@ -72,7 +75,7 @@ export default {
   },
   created() {
     this.selS()
-    this.getAllServices()
+    // this.getAllServices()
   },
   methods: {
     selS: function() {
@@ -84,25 +87,25 @@ export default {
         this.serviceNamespace = response.data.metadata.namespace
         this.serviceType = response.data.spec.type
         this.clusterIP = response.data.spec.clusterIP
-        this.innerPort = response.data.metadata.name + ':' + response.data.spec.ports[0].port + ' ' + response.data.spec.ports[0].protocol
+        this.innerPort = response.data.spec.ports
         this.keepConversation = response.data.spec.sessionAffinity
         this.creationTimestamp = response.data.metadata.creationTimestamp
         this.labels = response.data.metadata.labels
         this.selector = response.data.spec.selector
+        this.loading = false
       })
     },
-    getAllServices: function() {
-      // debugger
-      const _this = this
-      var data = {
-        serviceName: _this.serviceName,
-        serviceNamespace: _this.serviceNamespace
-      }
-      getServices(data).then(response => {
-        _this.serviceData = response.data.item
-        _this.loading = false
-      })
-    },
+    // getAllServices: function() {
+    //   debugger
+    //   const _this = this
+    //   var data = {
+    //     serviceName: _this.serviceName,
+    //     serviceNamespace: _this.serviceNamespace
+    //   }
+    //   getServices(data).then(response => {
+    //     _this.serviceData = response.data.item
+    //   })
+    // },
     time1: function(tm) {
       var data = new Date(tm)
       var str =

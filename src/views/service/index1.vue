@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="Show">
     <el-container>
       <el-main>
         <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%" @close="close('selForm')">
@@ -76,7 +76,7 @@
           width="100%"
           highlight-current-row
         >
-          <el-table-column prop="metadata.name" label="名称" sortable width="280" >
+          <el-table-column prop="metadata.name" label="名称" sortable>
             <template slot-scope="scope">
               <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
             </template>
@@ -86,7 +86,12 @@
               {{ rag(s.row.spec.type) }}
             </template>
           </el-table-column>
-          <el-table-column prop="spec.clusterIP" label="端点" sortable/>
+          <el-table-column prop="spec.clusterIP" label="IP" sortable/>
+          <el-table-column prop="spec.ports[0].port" label="端口">
+            <template slot-scope="s">
+              <el-tag>{{ rev(s.row) }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
           <el-table-column label="操作" width="165">
             <template slot-scope="scope">
@@ -391,7 +396,21 @@ export default {
       }
       return result
     },
-    close(formName) {
+    rev: function(row) {
+      var result = ''
+      var i = 0
+      if (row.spec.type === 'ClusterIP') {
+        for (i = 0; i < row.spec.ports.length; i++) {
+          result = row.spec.ports[i].port
+        }
+      } else if (row.spec.type === 'NodePort') {
+        for (i = 0; i < row.spec.ports.length; i++) {
+          result += row.spec.ports[i].port + '.' + row.spec.ports[i].nodePort + '  '
+        }
+      }
+      return result
+    },
+    close: function(formName) {
       this.$refs[formName].resetFields()
     },
     // handlePageChange: function(page) {
@@ -410,5 +429,17 @@ export default {
   }
   .input-with-select .el-input-group__prepend {
     background-color: #fff;
+  }
+  .Show .el-tag{
+    font-size:15px;
+    border-radius: 20px;
+    margin-right: 15px;
+    margin-bottom: 10px;
+  }
+  .Show{
+  font-size:15px;
+  }
+  .el-header{
+    padding-bottom: 0%;
   }
 </style>
