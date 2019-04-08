@@ -98,6 +98,18 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/config',
+    component: Layout,
+    children: [
+      {
+        path: 'config',
+        name: 'Config',
+        component: () => import('@/views/config/index'),
+        meta: { title: '配置', icon: 'config' }
+      }
+    ]
+  },
+  {
     path: '/storage',
     component: Layout,
     children: [
