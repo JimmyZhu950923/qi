@@ -89,7 +89,16 @@
           <el-table-column prop="spec.clusterIP" label="IP" sortable/>
           <el-table-column prop="spec.ports[0].port" label="端口">
             <template slot-scope="s">
-              <el-tag>{{ rev(s.row) }}</el-tag>
+              <span v-if="s.row.spec.type === 'ClusterIP'" >
+                <el-tag v-for="label in s.row.spec.ports" :key="label.a">
+                  {{ label.port }}
+                </el-tag>
+              </span>
+              <span v-else-if="s.row.spec.type === 'NodePort'">
+                <el-tag v-for="label in s.row.spec.ports" :key="label.a">
+                  {{ label.port }}.{{ label.nodePort }}
+                </el-tag>
+              </span>
             </template>
           </el-table-column>
           <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
@@ -393,20 +402,6 @@ export default {
         result = '集群IP'
       } else if (data === 'NodePort') {
         result = '节点端口'
-      }
-      return result
-    },
-    rev: function(row) {
-      var result = ''
-      var i = 0
-      if (row.spec.type === 'ClusterIP') {
-        for (i = 0; i < row.spec.ports.length; i++) {
-          result = row.spec.ports[i].port
-        }
-      } else if (row.spec.type === 'NodePort') {
-        for (i = 0; i < row.spec.ports.length; i++) {
-          result += row.spec.ports[i].port + '.' + row.spec.ports[i].nodePort + '  '
-        }
       }
       return result
     },
