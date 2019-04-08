@@ -85,7 +85,6 @@
 <script>
 import { Single } from '@/api/daemonset'
 import { getPods, update, delPod, getPod } from '@/api/pod'
-import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
     return {
@@ -199,12 +198,6 @@ export default {
       this.loading = true
       this.namespace1 = 'default'
       this.selectFunc()
-    },
-    selNameSpace: function() {
-      getAllNamespace().then(response => {
-        debugger
-        this.options4 = response.data.items
-      })
     },
     getSinglePod(metadata) {
       debugger
