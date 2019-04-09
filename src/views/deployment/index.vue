@@ -417,7 +417,6 @@ export default {
       }
     },
     re: function() {
-      this.$refs['deployForm'].resetFields()
       this.dialogVisible2 = false
       this.namespace2 = 'default'
       this.deploymentForm.name = ''
@@ -511,7 +510,7 @@ export default {
       Single(value, this.namespace2).then(response => {
         if (response.data !== undefined) {
           if (response.data.metadata.name === value) {
-            return callback(new Error('负载名字重复'))
+            return callback(new Error(this.namespace2 + '内负载名字重复'))
           }
         } else {
           return callback()

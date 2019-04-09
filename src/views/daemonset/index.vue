@@ -22,9 +22,9 @@
                 <el-select v-model="namespace2" placeholder="请选择">
                   <el-option
                     v-for="item in options4"
-                    :key="item.metadata.name"
-                    :label="item.metadata.name"
-                    :value="item.metadata.name"/>
+                    :key="item.Name"
+                    :label="item.Name"
+                    :value="item.Name"/>
                 </el-select>
               </el-form-item>
             </el-form>
@@ -368,7 +368,6 @@ export default {
       }
     },
     re: function() {
-      this.$refs['daeForm'].resetFields()
       this.dialogVisible2 = false
       this.namespace2 = 'default'
       this.daemonsetForm.name = ''

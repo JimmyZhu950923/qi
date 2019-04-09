@@ -299,10 +299,17 @@ export default {
       }
 
       getNamespace(value).then(response => {
-        if (response.data === undefined) {
+        debugger
+        if (response.data.length === 0) {
           return callback()
         } else {
-          return callback(new Error('name重复'))
+          for (var index in response.data) {
+            if (response.data[index].Name === value) {
+              return callback(new Error('name重复'))
+            } else {
+              return callback()
+            }
+          }
         }
       })
     }
