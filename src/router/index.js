@@ -104,7 +104,14 @@ export const constantRouterMap = [
       {
         path: 'config',
         name: 'Config',
-        component: () => import('@/views/config/index'),
+        component: () => import('@/views/config/index1'),
+        meta: { title: '配置', icon: 'config' }
+      },
+      {
+        path: 'config2/:name/:namespace',
+        name: 'Config2',
+        hidden: true,
+        component: () => import('@/views/config/index2'),
         meta: { title: '配置', icon: 'config' }
       }
     ]

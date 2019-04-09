@@ -82,7 +82,7 @@ export default {
       this.serviceName = this.$route.params.name
       this.serviceNamespace = this.$route.params.namespace
       getSingle(this.serviceNamespace, this.serviceName).then(response => {
-        debugger
+        // debugger
         this.serviceName = response.data.metadata.name
         this.serviceNamespace = response.data.metadata.namespace
         this.serviceType = response.data.spec.type
