@@ -33,7 +33,8 @@
               stripe
             >
               <el-table-column sortable prop="metadata.name" label="实例名称" width="300"/>
-              <el-table-column sortable prop="spec.nodeName" label="节点"/>
+              <el-table-column sortable prop="status.hostIP" label="节点IP"/>
+              <el-table-column sortable prop="status.podIP" label="podIP"/>
               <el-table-column sortable prop="status.phase" label="状态">
                 <template slot-scope="scope">
                   <font :color="checkStatusFunc(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
@@ -84,7 +85,6 @@
 <script>
 import { Single } from '@/api/daemonset'
 import { getPods, update, delPod, getPod } from '@/api/pod'
-import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
     return {
@@ -198,12 +198,6 @@ export default {
       this.loading = true
       this.namespace1 = 'default'
       this.selectFunc()
-    },
-    selNameSpace: function() {
-      getAllNamespace().then(response => {
-        debugger
-        this.options4 = response.data.items
-      })
     },
     getSinglePod(metadata) {
       debugger

@@ -39,3 +39,11 @@ export function delDae(data) {
     params: data
   })
 }
+
+export function createDYaml(namespace, daemonset) {
+  return request({
+    url: 'http://localhost:8080/v1/wb/daemonset/' + namespace,
+    method: 'post',
+    data: daemonset
+  })
+}

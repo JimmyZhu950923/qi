@@ -1,9 +1,15 @@
 <template>
   <div v-loading="loading" style="padding:20px">
-    <el-dialog :visible.sync="dialogVisible1" width="450px">
+    <el-dialog :visible.sync="dialogVisible1" width="450px" @close="close">
       <el-header>新建项目</el-header>
-      <el-form ref="form" :model="form" label-width="80px" @submit.native.prevent>
-        <el-form-item label="项目名称">
+      <el-form ref="form" :model="form" label-width="80px" status-icon @submit.native.prevent>
+        <el-form-item
+          :rules="[
+            { required: true, validator: validateName, trigger: 'blur' }
+          ]"
+          label="项目名称"
+          prop="name"
+          autocomplete="off">
           <el-input v-model="form.name" @keydown.enter.native="enterFunc"/>
         </el-form-item>
         <el-form-item label="访问级别">
@@ -14,7 +20,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1 = false">取 消</el-button>
-        <el-button :disabled="form.name.length < 2" type="primary" @click="addFunc">确 定</el-button>
+        <el-button :disabled="form.name.length < 2" type="primary" @click="addFunc('form')">确 定</el-button>
       </span>
     </el-dialog>
     <el-row>
@@ -172,6 +178,7 @@ export default {
         }
       ],
       flag: 0
+
     }
   },
   created() {
@@ -236,19 +243,26 @@ export default {
         _this.selectFunc()
       })
     },
-    addFunc: function() {
-      debugger
-      const _this = this
-      var data = this.form
-      // console.log(data)
-      addProject(data).then(response => {
-        _this.$message({
-          type: 'success',
-          message: '新建成功!'
-        })
-        _this.dialogVisible1 = false
-        _this.form.name = ''
-        _this.selectFunc()
+    addFunc: function(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          debugger
+          const _this = this
+          var data = this.form
+          // console.log(data)
+          addProject(data).then(response => {
+            _this.$message({
+              type: 'success',
+              message: '新建成功!'
+            })
+            _this.dialogVisible1 = false
+            _this.form.name = ''
+            _this.selectFunc()
+            _this.$refs[formName].resetFields()
+          })
+        } else {
+          return false
+        }
       })
     },
     handleCurrentChange: function(val) {
@@ -335,7 +349,36 @@ export default {
     goRouter: function(project_id) {
       // console.log
       this.$router.push({ name: 'Repositories', params: { projectId: project_id }})
+    },
+    validateName: function(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('项目名称不能为空'))
+      }
+      var data = {
+        name: value
+      }
+      // setTimeout(() => {
+      getProjects(data).then(response => {
+        if (response.total === 0) {
+          return callback()
+        } else {
+          for (var project in response.data) {
+            if (response.data[project].name === value) {
+              return callback(new Error('项目名重复'))
+            } else {
+              return callback()
+            }
+          }
+        }
+      })
+      // }, 1000)
+    },
+    close: function() {
+      debugger
+      this.name = ''
+      this.$refs['form'].resetFields()
     }
+
   }
 }
 </script>
