@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span="7">
           <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
-            <el-select slot="prepend" v-model="namespace2" size="mini" placeholder="请选择" @change="getAllConfigs()">
+            <el-select slot="prepend" v-model="namespace" size="mini" placeholder="请选择" @change="getAllConfigs()">
               <el-option
                 v-for="item in options4"
                 :key="item.metadata.name"
@@ -43,14 +43,14 @@
 </template>
 
 <script>
-import { getConfigs } from '@/api/config'
+import { getConfigs, getSingle } from '@/api/config'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
     return {
       options4: [],
       name: '',
-      namespace2: 'default',
+      namespace: 'default',
       tableData: [],
       selection: true,
       stripe: true,
@@ -68,13 +68,32 @@ export default {
       // debugger
       const _this = this
       var data = {
-        namespace: _this.namespace2
+        namespace: _this.namespace
       }
       getConfigs(data).then(response => {
         console.log(response)
         _this.tableData = response.data.items
         _this.countPage = response.data.items.length
       })
+    },
+    getSingleConfig: function() {
+      // debugger
+      const _this = this
+      if (_this.namespace === '') {
+        _this.$message({
+          type: 'danger',
+          message: '请先选择命名空间'
+        })
+      } else {
+        var namespace = _this.namespace
+        var name = _this.name
+        _this.tableData = []
+        getSingle(namespace, name).then(response => {
+          console.log(response)
+          _this.tableData.push(response.data)
+          _this.countPage = 1
+        })
+      }
     },
     nameChange: function() {
       this.getAllConfigs()
