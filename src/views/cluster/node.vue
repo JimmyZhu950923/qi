@@ -6,31 +6,7 @@
           <el-tab-pane label="主机" name="first">
             <el-row>
               <el-col :span="15">
-                <el-button type="primary" round size="mini" icon="el-icon-plus" @click="addNew = true">新建</el-button>
                 <el-button size="mini" type="success" round icon="el-icon-plus" @click="addNode = true">添加节点</el-button>
-                <el-dialog
-                  :visible.sync="addNew"
-                  title="新建集群"
-                  width="40%"
-                >
-                  <span>
-                    <el-form ref="form" :model="form" label-width="80px">
-                      <el-form-item label="集群名称">
-                        <el-input v-model="form.name"/>
-                      </el-form-item>
-                      <el-form-item label="集群类型">
-                        <el-radio-group v-model="form.resource">
-                          <el-radio label="test8067"/>
-                          <el-radio label="done02632"/>
-                        </el-radio-group>
-                      </el-form-item>
-                    </el-form>
-                  </span>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="addNew = false">取 消</el-button>
-                    <el-button type="primary" @click="addNew = false">确 定</el-button>
-                  </span>
-                </el-dialog>
                 <el-dialog
                   :visible.sync="addNode"
                   title="添加节点"
@@ -55,7 +31,9 @@
               <el-table-column
                 prop="status.addresses[0].address"
                 label="名称">
-                <template slot-scope="scope"><font color="#2995d7">{{ scope.row.metadata.name }}</font></template>
+                <template slot-scope="scope"><font color="#2995d7">
+                  <a @click="selectRow(scope.row.metadata.name)">{{ scope.row.metadata.name }}</a>
+                </font></template>
               </el-table-column>
               <el-table-column
                 prop="status.conditions[3].status"
@@ -104,9 +82,15 @@
                 </el-dialog>
               </el-col>
               <el-col :span="5">
-                <el-input v-model="singleForm.name" :clearable="true" style="width:245px" size="mini" placeholder="请输入NAME" @clear="getAllNsp">
-                  <el-button slot="append" size="mini" icon="el-icon-search" @click="getNsp"/>
-                </el-input>
+                <el-input
+                  v-model="singleForm.name"
+                  :clearable="true"
+                  size="mini"
+                  placeholder="请输入名称"
+                  prefix-icon="el-icon-search"
+                  @clear="getAllNsp"
+                  @keyup.native="nameChange"
+                />
               </el-col>
             </el-row>
             <el-table
@@ -117,18 +101,18 @@
               height="430px"
               tooltip-effect="dark"
               style="width: 100%">
-              <el-table-column label="名称" prop="metadata.name"/>
+              <el-table-column label="名称" prop="Name"/>
               <el-table-column label="状态">
                 <template slot-scope="scope">
-                  <font :color="getColor1(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
+                  <font color="#46AF40">{{ scope.row.Status }}</font>
                 </template>
               </el-table-column>
               <el-table-column label="创建时间">
-                <template slot-scope="scope">{{ getCreateTime(scope.row.metadata.creationTimestamp) }}</template>
+                <template slot-scope="scope">{{ getCreateTime(scope.row.CreateTime) }}</template>
               </el-table-column>
               <el-table-column fixed="right" label="操作" width="120px">
                 <template slot-scope="scope">
-                  <el-button type="danger" size="small" @click="deleteNsp(scope.row)">删除</el-button>
+                  <el-button :disabled="scope.row.Name==='default'" type="danger" size="small" @click="deleteNsp(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -145,10 +129,6 @@ export default {
   name: 'Node',
   data() {
     return {
-      form: {
-        name: '',
-        resource: 'test8067'
-      },
       singleForm: {
         name: ''
       },
@@ -156,7 +136,6 @@ export default {
         name: ''
       },
       addNode: false,
-      addNew: false,
       activeName: 'first',
       tableData: [],
       name1: '',
@@ -164,7 +143,8 @@ export default {
       loading: true,
       namespaceData: [],
       insert: false,
-      labelPosition: 'right'
+      labelPosition: 'right',
+      namespace: ''
     }
   },
   created() {
@@ -182,7 +162,7 @@ export default {
     getAllNsp() {
       const _this = this
       getAllNamespace().then(response => {
-        _this.namespaceData = response.data.items
+        _this.namespaceData = response.data
         _this.loading = false
       })
     },
@@ -192,7 +172,7 @@ export default {
       const _this = this
       var params = _this.singleForm.name
       getNamespace(params).then(response => {
-        _this.namespaceData.push(response.data)
+        _this.namespaceData = response.data
       })
     },
     addNsp() {
@@ -211,13 +191,9 @@ export default {
         type: 'warning'
       }).then(() => {
         const _this = this
-        var params = row.metadata.name
+        var params = row.Name
         deleteNamespace(params).then(response => {
           _this.getAllNsp()
-          setTimeout(() => {
-            console.log('>>>>>>>')
-            _this.getAllNsp()
-          }, 6000)
         })
         this.$message({
           type: 'success',
@@ -232,22 +208,16 @@ export default {
     },
     // 查询所有node
     getAllNode() {
+      debugger
+      this.namespace = this.$route.params.namespace
       const _this = this
       getNodes().then(response => {
-        // debugger
         _this.tableData = response.data.items
         _this.loading = false
       })
     },
     getColor(bol) {
       if (bol) {
-        return '#46AF40'
-      } else {
-        return '#F56C6C'
-      }
-    },
-    getColor1(status) {
-      if (status === 'Active') {
         return '#46AF40'
       } else {
         return '#F56C6C'
@@ -301,12 +271,15 @@ export default {
       return str
     },
     selectRow(nodeName) {
-      this.$router.push({ name: 'ShowNode', params: { nodeName: nodeName }})
+      this.$router.push({ name: 'ShowNode', params: { nodeName: nodeName, namespace: this.namespace }})
     },
     handleCommand(command) {
       if (command === 'b') {
         alert('迁移方法')
       }
+    },
+    nameChange() {
+      this.getNsp()
     }
   }
 }
