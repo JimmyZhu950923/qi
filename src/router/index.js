@@ -123,7 +123,7 @@ export const constantRouterMap = [
       {
         path: 'storage',
         name: 'Storage',
-        component: () => import('@/views/storage/index'),
+        component: () => import('@/views/storage/index1'),
         meta: { title: '存储', icon: 'storage' }
       }
     ]
@@ -184,7 +184,6 @@ export const constantRouterMap = [
         meta: { title: '镜像仓库', icon: 'repositories' }
         // hidden: true
       }
-
     ]
   },
   {
