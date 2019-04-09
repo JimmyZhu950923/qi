@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="Show">
     <el-main>
       <el-dialog :visible.sync="dialogVisible2" title="新建配置" width="35%" height="80%">
         <el-input
@@ -273,5 +273,17 @@ export default {
   }
   .input-with-select .el-input-group__prepend {
     background-color: #fff;
+  }
+  .Show .el-tag{
+    font-size:15px;
+    border-radius: 20px;
+    margin-right: 15px;
+    margin-bottom: 10px;
+  }
+  .Show{
+  font-size:15px;
+  }
+  .el-header{
+    padding-bottom: 0%;
   }
 </style>
