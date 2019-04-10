@@ -284,7 +284,7 @@ export default {
       })
     },
     rr: function() {
-      this.plc = null
+      this.namespace1 = null
       this.name = null
       this.getAllStorages()
     },
