@@ -36,7 +36,7 @@
             <el-button :disabled="selForm.name == ''" type="primary" @click="newService()">发布</el-button>
           </span>
         </el-dialog>
-        <el-dialog :visible.sync="dialogVisible2" title="新建服务" width="35%" height="80%">
+        <el-dialog :visible.sync="dialogVisible2" title="新建服务" width="35%" height="80%" @close="closed()">
           <el-input
             :rows="12"
             v-model="textarea"
@@ -406,7 +406,11 @@ export default {
       return result
     },
     close: function(formName) {
+      debugger
       this.$refs[formName].resetFields()
+    },
+    closed: function() {
+      this.textarea = ''
     },
     // handlePageChange: function(page) {
     //   this.currentPage = page
