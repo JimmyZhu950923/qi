@@ -10,7 +10,7 @@
           placeholder="填入 YAML 或 JSON 文件内容，将指定资源部署到当前所选命名空间。"/>
         <span slot="footer">
           <el-button @click="dialogVisible2 = false">取消</el-button>
-          <el-button :disabled="textarea.length == 0" type="primary" @click="createService()">发布</el-button>
+          <el-button :disabled="textarea.length == 0" type="primary" @click="createConfig()">发布</el-button>
         </span>
       </el-dialog>
       <el-row>
@@ -43,7 +43,7 @@
         <el-table-column prop="metadata.name" label="名称" sortable width="250">
           <template slot-scope="scope">
             <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
-          </template>ssss
+          </template>
         </el-table-column>
         <el-table-column prop="metadata.labels" label="标签">
           <template slot-scope="s">
@@ -139,7 +139,7 @@ export default {
       })
     },
     getSingleConfig: function() {
-      debugger
+      // debugger
       const _this = this
       if (_this.namespace === '') {
         _this.$message({
@@ -169,7 +169,7 @@ export default {
         _this.configs = JSON.stringify(response.data, null, 4)
       })
     },
-    createService: function() {
+    createConfig: function() {
       // debugger
       const _this = this
       var config1 = _this.textarea

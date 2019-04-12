@@ -117,6 +117,25 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/secret',
+    component: Layout,
+    children: [
+      {
+        path: 'secret',
+        name: 'Secret',
+        component: () => import('@/views/secret/index1'),
+        meta: { title: '保密', icon: 'secret' }
+      },
+      {
+        path: 'secret2/:name/:namespace',
+        name: 'Secret2',
+        hidden: true,
+        component: () => import('@/views/secret/index2'),
+        meta: { title: '保密', icon: 'secret' }
+      }
+    ]
+  },
+  {
     path: '/storage',
     component: Layout,
     children: [

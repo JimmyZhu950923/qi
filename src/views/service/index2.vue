@@ -95,17 +95,6 @@ export default {
         this.loading = false
       })
     },
-    // getAllServices: function() {
-    //   debugger
-    //   const _this = this
-    //   var data = {
-    //     serviceName: _this.serviceName,
-    //     serviceNamespace: _this.serviceNamespace
-    //   }
-    //   getServices(data).then(response => {
-    //     _this.serviceData = response.data.item
-    //   })
-    // },
     time1: function(tm) {
       var data = new Date(tm)
       var str =
