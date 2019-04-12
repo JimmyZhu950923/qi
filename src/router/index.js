@@ -98,52 +98,41 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/config',
+    path: '/configAndSecret',
     component: Layout,
+    meta: { title: '配置与存储', icon: 'config' },
     children: [
       {
         path: 'config',
         name: 'Config',
         component: () => import('@/views/config/index1'),
-        meta: { title: '配置', icon: 'config' }
+        meta: { title: '配置' }
       },
       {
         path: 'config2/:name/:namespace',
         name: 'Config2',
         hidden: true,
         component: () => import('@/views/config/index2'),
-        meta: { title: '配置', icon: 'config' }
-      }
-    ]
-  },
-  {
-    path: '/secret',
-    component: Layout,
-    children: [
+        meta: { title: '配置' }
+      },
       {
         path: 'secret',
         name: 'Secret',
         component: () => import('@/views/secret/index1'),
-        meta: { title: '保密', icon: 'secret' }
+        meta: { title: '保密' }
       },
       {
         path: 'secret2/:name/:namespace',
         name: 'Secret2',
         hidden: true,
         component: () => import('@/views/secret/index2'),
-        meta: { title: '保密', icon: 'secret' }
-      }
-    ]
-  },
-  {
-    path: '/storage',
-    component: Layout,
-    children: [
+        meta: { title: '保密' }
+      },
       {
         path: 'storage',
         name: 'Storage',
         component: () => import('@/views/storage/index1'),
-        meta: { title: '存储', icon: 'storage' }
+        meta: { title: '存储' }
       }
     ]
   },

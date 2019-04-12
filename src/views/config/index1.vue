@@ -141,10 +141,10 @@ export default {
     getSingleConfig: function() {
       // debugger
       const _this = this
-      if (_this.namespace === '') {
+      if (_this.namespace === '' || _this.name === '') {
         _this.$message({
           type: 'danger',
-          message: '请先选择命名空间'
+          message: '请先选择命名空间或者输入名称'
         })
       } else {
         var namespace = _this.namespace

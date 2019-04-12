@@ -251,10 +251,10 @@ export default {
     getSingleService: function() {
       // debugger
       const _this = this
-      if (_this.namespace2 === '') {
+      if (_this.namespace2 === '' || _this.name === '') {
         _this.$message({
           type: 'danger',
-          message: '请先选择命名空间'
+          message: '请先选择命名空间或者输入名称'
         })
       } else {
         var namespace = _this.namespace2
