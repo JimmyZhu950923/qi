@@ -40,7 +40,7 @@
         style="width: 100%"
         highlight-current-row
       >
-        <el-table-column prop="metadata.name" label="名称" sortable>
+        <el-table-column prop="metadata.name" label="名称" sortable width="250">
           <template slot-scope="scope">
             <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
           </template>ssss
@@ -52,7 +52,10 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
+        <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable width="100">
+          <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
+        </el-table-column>
+        <el-table-column prop="metadata.namespace" label="命名空间" sortable width="200"/>
         <el-table-column label="操作" width="165">
           <template slot-scope="scope">
             <el-button
@@ -254,6 +257,20 @@ export default {
     },
     closed: function() {
       this.textarea = ''
+    },
+    time: function(tm) {
+      var createTime = new Date(tm).getTime()
+      var now = new Date().getTime()
+      var age = Math.floor((now - createTime) / 1000)
+      if (age < 60) {
+        return Math.floor(age) + 's'
+      } else if (age / 60 < 60) {
+        return Math.floor(age / 60) + 'm'
+      } else if (age / 60 / 60 < 24) {
+        return Math.floor(age / 60 / 60) + 'h'
+      } else {
+        return Math.floor(age / 60 / 60 / 24) + 'd'
+      }
     },
     rr: function() {
       this.namespace = null

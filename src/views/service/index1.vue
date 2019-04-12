@@ -101,6 +101,9 @@
               </span>
             </template>
           </el-table-column>
+          <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable>
+            <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
+          </el-table-column>
           <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
           <el-table-column label="操作" width="165">
             <template slot-scope="scope">
@@ -404,6 +407,20 @@ export default {
         result = '节点端口'
       }
       return result
+    },
+    time: function(tm) {
+      var createTime = new Date(tm).getTime()
+      var now = new Date().getTime()
+      var age = Math.floor((now - createTime) / 1000)
+      if (age < 60) {
+        return Math.floor(age) + 's'
+      } else if (age / 60 < 60) {
+        return Math.floor(age / 60) + 'm'
+      } else if (age / 60 / 60 < 24) {
+        return Math.floor(age / 60 / 60) + 'h'
+      } else {
+        return Math.floor(age / 60 / 60 / 24) + 'd'
+      }
     },
     close: function(formName) {
       debugger
