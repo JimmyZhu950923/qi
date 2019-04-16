@@ -40,19 +40,19 @@
         style="width: 100%"
         highlight-current-row
       >
-        <el-table-column prop="metadata.name" label="名称" sortable>
+        <el-table-column prop="metadata.name" label="名称" sortable show-overflow-tooltip>
           <template slot-scope="scope">
             <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
           </template>
         </el-table-column>
-        <el-table-column prop="metadata.labels" label="标签">
+        <el-table-column prop="metadata.labels" label="标签" show-overflow-tooltip>
           <template slot-scope="s">
             <el-tag v-for="(label,value) in s.row.metadata.labels" :key="label.a">
               {{ value }}:{{ label }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="类型" sortable/>
+        <el-table-column prop="type" label="类型" sortable show-overflow-tooltip/>
         <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable width="100">
           <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
         </el-table-column>
@@ -83,7 +83,7 @@
       />
       <el-dialog
         :visible.sync="dialogVisible1"
-        title="修改服务"
+        title="修改保密"
         width="50%">
         <el-input
           :rows="15"

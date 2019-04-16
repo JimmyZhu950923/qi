@@ -82,7 +82,7 @@
       />
       <el-dialog
         :visible.sync="dialogVisible1"
-        title="修改服务"
+        title="修改配置"
         width="50%">
         <el-input
           :rows="15"
