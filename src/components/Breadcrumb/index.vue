@@ -64,6 +64,16 @@ export default {
             { path: '/home', meta: { title: '首页' }},
             { path: '/service/service', meta: { title: '服务' }}
           ].concat(matched)
+        } else if (first && first.name === 'Config2') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/configAndSecret/config', meta: { title: '配置' }}
+          ].concat(matched)
+        } else if (first && first.name === 'Secret2') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/configAndSecret/secret', meta: { title: '保密' }}
+          ].concat(matched)
         } else {
           matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched)
         }
