@@ -39,3 +39,11 @@ export function delDep(data) {
     params: data
   })
 }
+
+export function createDYaml(namespace, deployment) {
+  return request({
+    url: 'http://localhost:8080/v1/wb/' + namespace,
+    method: 'post',
+    data: deployment
+  })
+}

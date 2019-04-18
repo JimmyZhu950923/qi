@@ -70,8 +70,14 @@
                 <el-button type="success" size="mini" round icon="el-icon-plus" @click="insert = true">添加</el-button>
                 <el-button type="primary" size="mini" round icon="el-icon-refresh" @click="getAllNsp">刷新</el-button>
                 <el-dialog :visible.sync="insert" title="添加namespace" width="30%">
-                  <el-form :label-position="labelPosition" :model="insertForm" label-width="80px">
-                    <el-form-item label="name">
+                  <el-form ref="insertForm" :label-position="labelPosition" :model="insertForm" label-width="80px">
+                    <el-form-item
+                      :rules="[
+                        { required: true, validator: validateName, trigger: 'blur' }
+                      ]"
+                      label="name"
+                      prop="name"
+                      autocomplete="off">
                       <el-input v-model="insertForm.name" />
                     </el-form-item>
                   </el-form>
@@ -82,9 +88,15 @@
                 </el-dialog>
               </el-col>
               <el-col :span="5">
-                <el-input v-model="singleForm.name" :clearable="true" style="width:245px" size="mini" placeholder="请输入NAME" @clear="getAllNsp">
-                  <el-button slot="append" size="mini" icon="el-icon-search" @click="getNsp"/>
-                </el-input>
+                <el-input
+                  v-model="singleForm.name"
+                  :clearable="true"
+                  size="mini"
+                  placeholder="请输入名称"
+                  prefix-icon="el-icon-search"
+                  @clear="getAllNsp"
+                  @keyup.native="nameChange"
+                />
               </el-col>
             </el-row>
             <el-table
@@ -95,18 +107,18 @@
               height="430px"
               tooltip-effect="dark"
               style="width: 100%">
-              <el-table-column label="名称" prop="metadata.name"/>
+              <el-table-column label="名称" prop="Name"/>
               <el-table-column label="状态">
                 <template slot-scope="scope">
-                  <font :color="getColor1(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
+                  <font color="#46AF40">{{ scope.row.Status }}</font>
                 </template>
               </el-table-column>
               <el-table-column label="创建时间">
-                <template slot-scope="scope">{{ getCreateTime(scope.row.metadata.creationTimestamp) }}</template>
+                <template slot-scope="scope">{{ getCreateTime(scope.row.CreateTime) }}</template>
               </el-table-column>
               <el-table-column fixed="right" label="操作" width="120px">
                 <template slot-scope="scope">
-                  <el-button type="danger" size="small" @click="deleteNsp(scope.row)">删除</el-button>
+                  <el-button :disabled="scope.row.Name==='default'" type="danger" size="small" @click="deleteNsp(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -156,7 +168,7 @@ export default {
     getAllNsp() {
       const _this = this
       getAllNamespace().then(response => {
-        _this.namespaceData = response.data.items
+        _this.namespaceData = response.data
         _this.loading = false
       })
     },
@@ -166,15 +178,21 @@ export default {
       const _this = this
       var params = _this.singleForm.name
       getNamespace(params).then(response => {
-        _this.namespaceData.push(response.data)
+        _this.namespaceData = response.data
       })
     },
     addNsp() {
-      const _this = this
-      this.insert = false
-      var params = { name: _this.insertForm.name }
-      addNamespace(params).then(response => {
-        _this.getAllNsp()
+      this.$refs['insertForm'].validate((valid) => {
+        if (valid) {
+          const _this = this
+          this.insert = false
+          var params = { name: _this.insertForm.name }
+          addNamespace(params).then(response => {
+            _this.getAllNsp()
+          })
+        } else {
+          return false
+        }
       })
     },
     deleteNsp(row) {
@@ -185,13 +203,9 @@ export default {
         type: 'warning'
       }).then(() => {
         const _this = this
-        var params = row.metadata.name
+        var params = row.Name
         deleteNamespace(params).then(response => {
           _this.getAllNsp()
-          setTimeout(() => {
-            console.log('>>>>>>>')
-            _this.getAllNsp()
-          }, 6000)
         })
         this.$message({
           type: 'success',
@@ -216,13 +230,6 @@ export default {
     },
     getColor(bol) {
       if (bol) {
-        return '#46AF40'
-      } else {
-        return '#F56C6C'
-      }
-    },
-    getColor1(status) {
-      if (status === 'Active') {
         return '#46AF40'
       } else {
         return '#F56C6C'
@@ -282,6 +289,29 @@ export default {
       if (command === 'b') {
         alert('迁移方法')
       }
+    },
+    nameChange() {
+      this.getNsp()
+    },
+    validateName(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('name不能为空'))
+      }
+
+      getNamespace(value).then(response => {
+        debugger
+        if (response.data.length === 0) {
+          return callback()
+        } else {
+          for (var index in response.data) {
+            if (response.data[index].Name === value) {
+              return callback(new Error('name重复'))
+            } else {
+              return callback()
+            }
+          }
+        }
+      })
     }
   }
 }

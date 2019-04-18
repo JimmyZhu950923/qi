@@ -55,8 +55,9 @@
               style="width:100%"
               stripe
             >
-              <el-table-column sortable prop="metadata.name" label="实例名称" width="300"/>
-              <el-table-column sortable prop="spec.nodeName" label="节点" width="140"/>
+              <el-table-column sortable prop="metadata.name" label="实例名称" width="270"/>
+              <el-table-column sortable prop="status.hostIP" label="节点IP"/>
+              <el-table-column sortable prop="status.podIP" label="podIP"/>
               <el-table-column sortable prop="status.phase" label="状态" width="130">
                 <template slot-scope="scope">
                   <font :color="checkStatusFunc(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
@@ -107,7 +108,6 @@
 <script>
 import { Single } from '@/api/deployment'
 import { getPods, update, delPod, getPod } from '@/api/pod'
-import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
     return {
@@ -238,17 +238,12 @@ export default {
       this.namespace1 = 'default'
       this.selectFunc()
     },
-    selNameSpace: function() {
-      getAllNamespace().then(response => {
-        debugger
-        this.options4 = response.data.items
-      })
-    },
     getSinglePod(metadata) {
       const _this = this
       var params = { podName: metadata.name, namespace: metadata.namespace }
       console.log(params)
       getPod(params).then(response => {
+        debugger
         _this.dialogVisible = true
         _this.pods = JSON.stringify(response.data, null, 4)
       })
