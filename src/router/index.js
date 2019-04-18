@@ -93,7 +93,7 @@ export const constantRouterMap = [
         name: 'Service2',
         hidden: true,
         component: () => import('@/views/service/index2'),
-        meta: { title: '服务', icon: 'server' }
+        meta: { title: '详情', icon: 'server' }
       }
     ]
   },
@@ -113,7 +113,7 @@ export const constantRouterMap = [
         name: 'Config2',
         hidden: true,
         component: () => import('@/views/config/index2'),
-        meta: { title: '配置' }
+        meta: { title: '详情' }
       },
       {
         path: 'secret',
@@ -126,7 +126,7 @@ export const constantRouterMap = [
         name: 'Secret2',
         hidden: true,
         component: () => import('@/views/secret/index2'),
-        meta: { title: '保密' }
+        meta: { title: '详情' }
       },
       {
         path: 'storage',
