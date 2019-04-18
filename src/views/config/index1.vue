@@ -73,13 +73,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
+      <!-- <el-pagination
         :current-page="currentPage"
         :total="countPage"
         :page-size="pageSize"
         layout="total,prev,pager,next"
         @current-change="handlePageChange"
-      />
+      /> -->
       <el-dialog
         :visible.sync="dialogVisible1"
         title="修改配置"
@@ -277,10 +277,10 @@ export default {
       this.name = null
       this.getAllConfigs()
     },
-    handlePageChange: function(page) {
-      this.currentPage = page
-      this.getAllConfigs()
-    },
+    // handlePageChange: function(page) {
+    //   this.currentPage = page
+    //   this.getAllConfigs()
+    // },
     goIndex2(name, namespace) {
       this.$router.push({ name: 'Config2', params: { name: name, namespace: namespace }})
     }

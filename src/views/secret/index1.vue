@@ -74,13 +74,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
+      <!-- <el-pagination
         :current-page="currentPage"
         :total="countPage"
         :page-size="pageSize"
         layout="total,prev,pager,next"
         @current-change="handlePageChange"
-      />
+      /> -->
       <el-dialog
         :visible.sync="dialogVisible1"
         title="修改保密"
@@ -278,10 +278,10 @@ export default {
       this.name = null
       this.getAllSecrets()
     },
-    handlePageChange: function(page) {
-      this.currentPage = page
-      this.getAllSecrets()
-    },
+    // handlePageChange: function(page) {
+    //   this.currentPage = page
+    //   this.getAllSecrets()
+    // },
     goIndex2(name, namespace) {
       this.$router.push({ name: 'Secret2', params: { name: name, namespace: namespace }})
     }
