@@ -1,40 +1,49 @@
 import router from './router'
-import store from './store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { Message } from 'element-ui'
-import { getToken } from '@/utils/auth' // getToken from cookie
-
+// import { getToken } from '@/utils/auth' // getToken from cookie
+import config from '@/config/config'
+import ranNum from '@/utils/ranNum'
+import token from '@/utils/token'
 NProgress.configure({ showSpinner: false })// NProgress configuration
 
-const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (getToken()) {
-    if (to.path === '/login') {
-      next({ path: '/' })
-      NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
-    } else {
-      if (store.getters.roles.length === 0) {
-        store.dispatch('GetInfo').then(res => { // 拉取用户信息
-          next()
-        }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
-          })
-        })
-      } else {
-        next()
+  debugger
+  if (localStorage.getItem('access_token')) {
+    next()
+  } else {
+    const params = location.search.substr(1).split('&') // 获取query参数，存储在一个数组中
+    // const code = param.substr(1).split('=')[1]
+    var code = null
+    for (var i = 0; i < params.length; i++) {
+      var values = params[i].split('=')
+      if (values[0] === 'code') {
+        code = values[1]
       }
     }
-  } else {
-    if (whiteList.indexOf(to.path) !== -1) {
-      next()
+    if (code == null) {
+      config.code = ranNum(4)
+      var querystring = require('querystring')
+      var authorUrl = config.userAuthorizationUri
+      authorUrl = authorUrl + ('?' + querystring.stringify({
+        client_id: config.clientId,
+        response_type: config.response_type,
+        scope: config.scope,
+        state: config.state,
+        redirect_uri: 'http://localhost:9528' + to.path
+      }))
+      window.location.href = authorUrl
     } else {
-      next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
-      NProgress.done()
+      token.getTokenFromService(this, code, (response) => {
+        debugger
+        localStorage.setItem('access_token', response.data.access_token)
+        next({ path: to.path })
+      }, function(error) {
+        alert(error)
+      })
     }
+    NProgress.done()
   }
 })
 

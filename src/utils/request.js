@@ -33,6 +33,9 @@ service.interceptors.response.use(
      */
     const res = response.data
     if (res.code !== 20000) {
+      if (res.access_token !== undefined) {
+        return response.data
+      }
       Message({
         message: res.message,
         type: 'error',
