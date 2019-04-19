@@ -47,7 +47,7 @@
           :fit="true"
           :data="tableData"
           stripe
-          height="460px"
+          height="430px"
           tooltip-effect="dark"
           style="width: 100%">
           <el-table-column label="Name">

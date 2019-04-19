@@ -377,9 +377,9 @@ export default {
       const _this = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.dialogVisible = false
           var params = this.formLabelAlign
           insertLabel(params).then(response => {
+            _this.dialogVisible = false
             _this.selectLabelFunc()
             this.formLabelAlign = {}
             this.$refs[formName].resetFields()
