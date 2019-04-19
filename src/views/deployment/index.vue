@@ -470,10 +470,9 @@ export default {
         this.deployment = []
         Single(this.flag, this.select).then(response => {
           if (response.data !== undefined) {
-            debugger
-            this.loading = false
             this.deployment.push(response.data)
           }
+          this.loading = false
         })
       }
     },

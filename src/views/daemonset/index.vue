@@ -421,10 +421,9 @@ export default {
         this.daemonset = []
         Single(this.flag, this.select).then(response => {
           if (response.data !== undefined) {
-            debugger
-            this.loading = false
             this.daemonset.push(response.data)
           }
+          this.loading = false
         })
       }
     },

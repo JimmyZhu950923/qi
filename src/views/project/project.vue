@@ -186,7 +186,7 @@ export default {
   },
   methods: {
     selectFunc: function() {
-      debugger
+      // debugger
       const _this = this
       var data = {
         name: _this.name,
@@ -205,7 +205,7 @@ export default {
       this.selectFunc()
     },
     handleSelectionChange: function(val) {
-      debugger
+      // debugger
       this.multipleSelection = val
     },
     deleteFunc: function() {
@@ -246,7 +246,7 @@ export default {
     addFunc: function(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          debugger
+          // debugger
           const _this = this
           var data = this.form
           // console.log(data)
@@ -374,7 +374,7 @@ export default {
       // }, 1000)
     },
     close: function() {
-      debugger
+      // debugger
       this.name = ''
       this.$refs['form'].resetFields()
     }

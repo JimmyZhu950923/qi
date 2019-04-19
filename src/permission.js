@@ -9,7 +9,7 @@ NProgress.configure({ showSpinner: false })// NProgress configuration
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  debugger
+  // debugger
   if (localStorage.getItem('access_token')) {
     next()
   } else {
@@ -36,7 +36,7 @@ router.beforeEach((to, from, next) => {
       window.location.href = authorUrl
     } else {
       token.getTokenFromService(this, code, (response) => {
-        debugger
+        // debugger
         localStorage.setItem('access_token', response.data.access_token)
         next({ path: to.path })
       }, function(error) {
