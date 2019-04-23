@@ -1,7 +1,7 @@
 <template>
   <div class="Show">
     <el-main>
-      <el-dialog :visible.sync="dialogVisible2" title="新建配置" width="35%" height="80%" @close="closed()">
+      <el-dialog :visible.sync="dialogVisible2" title="新建保密" width="35%" height="80%" @close="closed()">
         <el-input
           :rows="12"
           v-model="textarea"

@@ -20,7 +20,7 @@
           <el-button :disabled="selForm.name == ''" type="primary" @click="newStorage()">创建</el-button>
         </span>
       </el-dialog>
-      <el-dialog :visible.sync="dialogVisible2" title="新建服务" width="35%" height="80%">
+      <el-dialog :visible.sync="dialogVisible2" title="新建存储" width="35%" height="80%">
         <el-input
           :rows="12"
           v-model="textarea"
