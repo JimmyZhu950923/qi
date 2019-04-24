@@ -41,7 +41,6 @@
             :rows="12"
             v-model="textarea"
             type="textarea"
-            clearable
             placeholder="填入 YAML 或 JSON 文件内容，将指定资源部署到当前所选命名空间。"/>
           <span slot="footer">
             <el-button @click="dialogVisible2 = false">取消</el-button>
@@ -54,7 +53,7 @@
             <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible2 = true">yaml新建</el-button>
           </el-col>
           <el-col :span="7">
-            <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
+            <el-input v-model="name" :clearable="name !== null" size="mini" placeholder="请输入名称" class="input-with-select">
               <el-select slot="prepend" v-model="namespace2" size="mini" placeholder="请选择" @change="getAllServices()">
                 <el-option
                   v-for="item in options4"
@@ -249,12 +248,17 @@ export default {
       })
     },
     getSingleService: function() {
-      // debugger
+      debugger
       const _this = this
-      if (_this.namespace2 === '' || _this.name === '') {
+      if (_this.namespace2 === null && _this.name !== '') {
         _this.$message({
           type: 'danger',
-          message: '请先选择命名空间或者输入名称'
+          message: '请先选择命名空间'
+        })
+      } else if (_this.namespace2 !== null && _this.name === '') {
+        _this.$message({
+          type: 'danger',
+          message: '请先填写名称'
         })
       } else {
         var namespace = _this.namespace2
