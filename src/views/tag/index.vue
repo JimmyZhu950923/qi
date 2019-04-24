@@ -87,13 +87,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
+      <!-- <el-pagination
         :current-page="currentPage"
         :total="countPage"
         :page-size="pageSize"
         layout="total,prev,pager,next"
         @current-change="handlePageChange"
-      />
+      /> -->
     </el-header>
   </el-form>
 </template>
@@ -156,7 +156,7 @@ export default {
       all(data).then(response => {
         _this.tableData = response.result
         console.log(_this.tableData)
-        _this.countPage = response.result.length
+        // _this.countPage = response.result.length
       })
     },
     namechange: function() {
@@ -201,10 +201,10 @@ export default {
         _this.selectFunc()
       })
     },
-    handlePageChange: function(page) {
-      this.currentPage = page
-      this.selectFunc()
-    },
+    // handlePageChange: function(page) {
+    //   this.currentPage = page
+    //   this.selectFunc()
+    // },
     rag: function(data) {
       var sum = data / 1024 / 1024
       return sum.toFixed(2)
