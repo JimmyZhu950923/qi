@@ -115,10 +115,10 @@ export default {
       namespace: 'default',
       tableData: [],
       selection: true,
-      stripe: true,
-      pageSize: 20,
-      currentPage: 1,
-      countPage: 0
+      stripe: true
+      // pageSize: 20,
+      // currentPage: 1,
+      // countPage: 0
     }
   },
   created() {

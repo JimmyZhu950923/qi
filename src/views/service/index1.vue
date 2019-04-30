@@ -211,9 +211,9 @@ export default {
       namespace1: '',
       namespace2: 'default',
       value: '',
-      pageSize: 20,
-      currentPage: 1,
-      countPage: 0,
+      // pageSize: 20,
+      // currentPage: 1,
+      // countPage: 0,
       rules: {
         name: [
           { required: true, validator: checkName, trigger: 'blur' }
@@ -248,7 +248,7 @@ export default {
       })
     },
     getSingleService: function() {
-      debugger
+      // debugger
       const _this = this
       if (_this.namespace2 === null && _this.name !== '') {
         _this.$message({
@@ -427,7 +427,7 @@ export default {
       }
     },
     close: function(formName) {
-      debugger
+      // debugger
       this.$refs[formName].resetFields()
     },
     closed: function() {

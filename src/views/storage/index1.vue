@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-main>
-      <el-dialog :visible.sync="dialogVisible" title="新建存储" width="35%" height="80%">
+      <el-dialog :visible.sync="dialogVisible" title="新建存储" width="35%" height="80%" @close="close('selForm')">
         <el-form :model="selForm" label-width="80px">
           <el-form-item label="存储名称">
             <el-input v-model="selForm.name" class="searchClass"/>
@@ -20,7 +20,7 @@
           <el-button :disabled="selForm.name == ''" type="primary" @click="newStorage()">创建</el-button>
         </span>
       </el-dialog>
-      <el-dialog :visible.sync="dialogVisible2" title="新建存储" width="35%" height="80%">
+      <el-dialog :visible.sync="dialogVisible2" title="新建存储" width="35%" height="80%" @close="closed()">
         <el-input
           :rows="12"
           v-model="textarea"
@@ -60,15 +60,17 @@
         style="width: 100%"
         highlight-current-row
       >
-        <el-table-column prop="" label="名称" sortable>
+        <el-table-column prop="metadata.name" label="名称" sortable>
           <template slot-scope="scope">
             <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
           </template>
         </el-table-column>
-        <el-table-column prop="" label="命名空间" sortable/>
-        <el-table-column prop="" label="卷" sortable/>
-        <el-table-column prop="" label="存储类别" sortable/>
-        <el-table-column prop="" label="命名空间" sortable/>
+        <el-table-column prop="parameters.adminSecretNamespace" label="管理者命名空间" sortable />
+        <el-table-column prop="provisioner" label="类型" sortable />
+        <el-table-column prop="parameters.userSecretNamespace" label="用户命名空间" sortable />
+        <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable width="100">
+          <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
+        </el-table-column>
         <el-table-column label="操作" width="165">
           <template slot-scope="scope">
             <el-button
@@ -134,10 +136,10 @@ export default {
       namespace: '',
       namespace1: 'default',
       value: '',
-      stripe: true,
-      pageSize: 20,
-      currentPage: 1,
-      countPage: 0
+      stripe: true
+      // pageSize: 20,
+      // currentPage: 1,
+      // countPage: 0
     }
   },
   created() {
@@ -158,10 +160,15 @@ export default {
     },
     getSingleStorage: function() {
       const _this = this
-      if (_this.namespace1 === '') {
+      if (_this.namespace1 === null && _this.name !== '') {
         _this.$message({
           type: 'danger',
           message: '请先选择命名空间'
+        })
+      } else if (_this.namespace1 !== null && _this.name === '') {
+        _this.$message({
+          type: 'danger',
+          message: '请先填写名称'
         })
       } else {
         var namespace = _this.namespace1
@@ -287,6 +294,27 @@ export default {
       this.namespace1 = null
       this.name = null
       this.getAllStorages()
+    },
+    close: function(formName) {
+      // debugger
+      this.$refs[formName].resetFields()
+    },
+    closed: function() {
+      this.textarea = ''
+    },
+    time: function(tm) {
+      var createTime = new Date(tm).getTime()
+      var now = new Date().getTime()
+      var age = Math.floor((now - createTime) / 1000)
+      if (age < 60) {
+        return Math.floor(age) + 's'
+      } else if (age / 60 < 60) {
+        return Math.floor(age / 60) + 'm'
+      } else if (age / 60 / 60 < 24) {
+        return Math.floor(age / 60 / 60) + 'h'
+      } else {
+        return Math.floor(age / 60 / 60 / 24) + 'd'
+      }
     },
     // handlePageChange: function(page) {
     //   this.currentPage = page

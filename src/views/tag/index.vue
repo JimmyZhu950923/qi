@@ -125,9 +125,9 @@ export default {
       options: [],
       // value5: [],
       stripe: true,
-      pageSize: 5,
-      currentPage: 1,
-      countPage: 0,
+      // pageSize: 5,
+      // currentPage: 1,
+      // countPage: 0,
       repoName: ''
     }
   },
