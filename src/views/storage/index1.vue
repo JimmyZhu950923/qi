@@ -2,12 +2,12 @@
   <div>
     <el-main>
       <el-dialog :visible.sync="dialogVisible" title="新建存储" width="35%" height="80%" @close="close('selForm')">
-        <el-form :model="selForm" label-width="80px">
-          <el-form-item label="存储名称">
-            <el-input v-model="selForm.name" class="searchClass"/>
+        <el-form ref="selForm" :model="selForm" :rules="rules" status-icon label-width="80px">
+          <el-form-item label="存储名称" prop="name">
+            <el-input v-model="selForm.name" class="searchClass" auto-complete="off" clearable/>
           </el-form-item>
-          <el-form-item label="存储类型">
-            <el-input class="searchClass"/>
+          <el-form-item label="存储类型" prop="provisioner">
+            <el-input v-model="selForm.provisioner" class="searchClass"/>
           </el-form-item>
           <el-form-item label="存储大小">
             <el-input class="searchClass">

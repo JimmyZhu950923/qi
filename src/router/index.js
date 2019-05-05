@@ -133,6 +133,13 @@ export const constantRouterMap = [
         name: 'Storage',
         component: () => import('@/views/storage/index1'),
         meta: { title: '存储' }
+      },
+      {
+        path: 'storage2/:name/:namespace',
+        name: 'Storage2',
+        hidden: true,
+        component: () => import('@/views/storage/index2'),
+        meta: { title: '详情' }
       }
     ]
   },

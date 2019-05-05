@@ -74,6 +74,11 @@ export default {
             { path: '/home', meta: { title: '首页' }},
             { path: '/configAndSecret/secret', meta: { title: '保密' }}
           ].concat(matched)
+        } else if (first && first.name === 'Storage2') {
+          matched = [
+            { path: '/home', meta: { title: '首页' }},
+            { path: '/configAndSecret/storage', meta: { title: '存储' }}
+          ].concat(matched)
         } else {
           matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched)
         }
