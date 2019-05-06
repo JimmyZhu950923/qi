@@ -28,11 +28,15 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
   response => {
+    debugger
     /**
      * code为非20000是抛错 可结合自己业务进行修改
      */
     const res = response.data
     if (res.code !== 20000) {
+      if (res.access_token !== undefined) {
+        return response.data
+      }
       Message({
         message: res.message,
         type: 'error',
