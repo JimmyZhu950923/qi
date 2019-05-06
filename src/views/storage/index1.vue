@@ -2,7 +2,7 @@
   <div>
     <el-main>
       <el-dialog :visible.sync="dialogVisible" title="新建存储" width="35%" height="80%" @close="close('selForm')">
-        <el-form ref="selForm" :model="selForm" :rules="rules" status-icon label-width="80px">
+        <el-form ref="selForm" :model="selForm" status-icon label-width="80px">
           <el-form-item label="存储名称" prop="name">
             <el-input v-model="selForm.name" class="searchClass" auto-complete="off" clearable/>
           </el-form-item>
@@ -257,16 +257,15 @@ export default {
         })
     },
     updateStorage: function() {
-      // debugger
+      debugger
       const _this = this
       var name = JSON.parse(_this.storages)
-      var namespace = _this.storages.metadata.namespace
       this.$confirm('此操作将作出修改, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        update(name, namespace).then(response => {
+        update(name).then(response => {
           _this.dialogVisible1 = false
           this.$message({
             type: 'success',

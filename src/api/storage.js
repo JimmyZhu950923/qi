@@ -39,10 +39,10 @@ export function remove(data) {
   })
 }
 // 更新
-export function update(name, namespace) {
+export function update(name) {
   return request({
     url: 'http://127.0.0.1:8080/v1/storage',
     method: 'put',
-    params: { name: name, namespace: namespace }
+    params: { name: name }
   })
 }
