@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="Show">
     <el-container>
       <el-main>
-        <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%">
-          <el-form :model="selForm" label-width="80px">
-            <el-form-item label="服务名称">
-              <el-input v-model="selForm.name" class="searchClass" />
+        <el-dialog :visible.sync="dialogVisible" title="新建服务" width="35%" height="80%" @close="close('selForm')">
+          <el-form ref="selForm" :model="selForm" :rules="rules" status-icon label-width="80px">
+            <el-form-item label="服务名称" prop="name">
+              <el-input v-model="selForm.name" class="searchClass" auto-complete="off" clearable/>
             </el-form-item>
-            <el-form-item label="命名空间:">
+            <el-form-item label="命名空间" prop="namespace1">
               <el-select v-model="selForm.namespace1">
                 <el-option
                   v-for="item in options4"
@@ -16,7 +16,7 @@
                   :value="item.metadata.name"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="服务类型">
+            <el-form-item label="服务类型" prop="type">
               <el-select v-model="selForm.type">
                 <el-option
                   v-for="item in options"
@@ -25,21 +25,35 @@
                   :value="item.value"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="Port">
-              <el-input v-model="selForm.port" class="searchClass"/>
+            <el-form-item
+              label="端点"
+              prop="port">
+              <el-input v-model.number="selForm.port" class="searchClass" auto-complete="off" clearable/>
             </el-form-item>
           </el-form>
           <span slot="footer">
             <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="newService()">发布</el-button>
+            <el-button :disabled="selForm.name == ''" type="primary" @click="newService()">发布</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog :visible.sync="dialogVisible2" title="新建服务" width="35%" height="80%" @close="closed()">
+          <el-input
+            :rows="12"
+            v-model="textarea"
+            type="textarea"
+            placeholder="填入 YAML 或 JSON 文件内容，将指定资源部署到当前所选命名空间。"/>
+          <span slot="footer">
+            <el-button @click="dialogVisible2 = false">取消</el-button>
+            <el-button :disabled="textarea.length == 0" type="primary" @click="createService()">发布</el-button>
           </span>
         </el-dialog>
         <el-row>
           <el-col :span="15">
-            <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible = true">&nbsp;&nbsp;新建&nbsp;&nbsp;</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible = true">简单新建</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible2 = true">yaml新建</el-button>
           </el-col>
           <el-col :span="7">
-            <el-input v-model="name" size="mini" clearable placeholder="请输入名称" class="input-with-select">
+            <el-input v-model="name" :clearable="name !== null" size="mini" placeholder="请输入名称" class="input-with-select">
               <el-select slot="prepend" v-model="namespace2" size="mini" placeholder="请选择" @change="getAllServices()">
                 <el-option
                   v-for="item in options4"
@@ -61,7 +75,7 @@
           width="100%"
           highlight-current-row
         >
-          <el-table-column prop="metadata.name" label="名称" sortable width="280" >
+          <el-table-column prop="metadata.name" label="名称" sortable>
             <template slot-scope="scope">
               <a @click="goIndex2(scope.row.metadata.name, scope.row.metadata.namespace)">{{ scope.row.metadata.name }}</a>
             </template>
@@ -71,7 +85,24 @@
               {{ rag(s.row.spec.type) }}
             </template>
           </el-table-column>
-          <el-table-column prop="spec.clusterIP" label="端点" sortable/>
+          <el-table-column prop="spec.clusterIP" label="IP" sortable/>
+          <el-table-column prop="spec.ports[0].port" label="端口">
+            <template slot-scope="s">
+              <span v-if="s.row.spec.type === 'ClusterIP'" >
+                <el-tag v-for="label in s.row.spec.ports" :key="label.a">
+                  {{ label.port }}
+                </el-tag>
+              </span>
+              <span v-else-if="s.row.spec.type === 'NodePort'">
+                <el-tag v-for="label in s.row.spec.ports" :key="label.a">
+                  {{ label.port }}.{{ label.nodePort }}
+                </el-tag>
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable>
+            <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
+          </el-table-column>
           <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
           <el-table-column label="操作" width="165">
             <template slot-scope="scope">
@@ -118,33 +149,56 @@
 </template>
 
 <script>
-import { getServices, getSingle, addServices, remove, update } from '@/api/service'
+import { getServices, getSingle, addServices, createYaml, remove, update } from '@/api/service'
 import { getAllNamespace } from '@/api/namespace'
 export default {
   data() {
+    var checkPort = (rule, value, callback) => {
+      // debugger
+      if (!value) {
+        callback(new Error('请输入端点'))
+      }
+      if (!Number.isInteger(value)) {
+        callback(new Error('请输入数字值'))
+      } else {
+        callback()
+      }
+    }
+    var checkName = (rule, value, callback) => {
+      // debugger
+      if (!value) {
+        return callback(new Error('请输入名称'))
+      }
+      // debugger
+      getSingle(this.selForm.namespace1, value).then(response => {
+        // debugger
+        if (response.data === undefined) {
+          callback()
+        } else {
+          callback(new Error('服务名称重复'))
+        }
+      })
+    }
     return {
       name: '',
       namespace: '',
       dialogVisible: false,
       dialogVisible1: false,
+      dialogVisible2: false,
       services: '',
       service: '',
+      textarea: '',
       tableData: [],
       sels: [],
       input: '',
       selection: true,
       selForm: {
-        metadata: {
-          name: '',
-          namespace: ''
-        },
-        spec: {
-          ports: [{
-            port: 0
-          }],
-          type: ''
-        }
+        name: '',
+        namespace1: 'default',
+        port: '',
+        type: ''
       },
+      selForm1: {},
       options: [{
         value: 'ClusterIP',
         label: '集群IP'
@@ -155,11 +209,25 @@ export default {
       options4: [],
       stripe: true,
       namespace1: '',
-      namespace2: '',
+      namespace2: 'default',
       value: '',
-      pageSize: 20,
-      currentPage: 1,
-      countPage: 0
+      // pageSize: 20,
+      // currentPage: 1,
+      // countPage: 0,
+      rules: {
+        name: [
+          { required: true, validator: checkName, trigger: 'blur' }
+        ],
+        namespace1: [
+          { required: true, message: '请必须选择命名空间', trigger: 'change' }
+        ],
+        type: [
+          { required: true, message: '请必须选择服务类型', trigger: 'change' }
+        ],
+        port: [
+          { required: true, validator: checkPort, trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
@@ -182,10 +250,15 @@ export default {
     getSingleService: function() {
       // debugger
       const _this = this
-      if (_this.namespace2 === '') {
+      if (_this.namespace2 === null && _this.name !== '') {
         _this.$message({
           type: 'danger',
           message: '请先选择命名空间'
+        })
+      } else if (_this.namespace2 !== null && _this.name === '') {
+        _this.$message({
+          type: 'danger',
+          message: '请先填写名称'
         })
       } else {
         var namespace = _this.namespace2
@@ -204,6 +277,7 @@ export default {
       var name = metadata.name
       var namespace = metadata.namespace
       getSingle(namespace, name).then(response => {
+        // debugger
         _this.dialogVisible1 = true
         _this.service = response.data
         _this.services = JSON.stringify(response.data, null, 4)
@@ -215,21 +289,56 @@ export default {
     newService: function() {
       // debugger
       const _this = this
-      var name = this.selForm.name
-      var namespace = this.selForm.namespace1
-      var type = this.selForm.type
-      var port = this.selForm.port
-      addServices(name, namespace, type, port).then(response => {
-        _this.$message({
-          type: 'success',
-          message: '新建成功!'
+      this.$refs['selForm'].validate((valid) => {
+        if (valid) {
+          var name = _this.selForm.name
+          var namespace = _this.selForm.namespace1
+          var type = _this.selForm.type
+          var port = _this.selForm.port
+          addServices(name, namespace, type, port).then(response => {
+            _this.$message({
+              type: 'success',
+              message: '新建成功!'
+            })
+            _this.dialogVisible = false
+            _this.selForm.name = ''
+            _this.selForm.namespace1 = ''
+            _this.selForm.type = ''
+            _this.selForm.port = 0
+            this.$refs['selForm'].resetFields()
+            _this.getAllServices()
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    createService: function() {
+      // debugger
+      const _this = this
+      var service1 = _this.textarea
+      var namespace = _this.namespace2
+      this.$confirm('此操作将创建, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        createYaml(service1, namespace).then(response => {
+          _this.dialogVisible2 = false
+          _this.textarea = ''
+          _this.getAllServices()
+          this.$message({
+            type: 'success',
+            message: '新建成功'
+          })
         })
-        _this.dialogVisible = false
-        _this.selForm.name = ''
-        _this.selForm.namespace = ''
-        _this.selForm.type = ''
-        _this.selForm.port = 0
-        _this.getAllServices()
+      }).catch(() => {
+        _this.dialogVisible2 = false
+        this.$message({
+          type: 'info',
+          message: '取消修改'
+        })
       })
     },
     delService: function(metadata) {
@@ -257,7 +366,7 @@ export default {
         })
     },
     updateService: function() {
-      debugger
+      // debugger
       const _this = this
       var name = JSON.parse(_this.services)
       var namespace = _this.service.metadata.namespace
@@ -303,6 +412,27 @@ export default {
       }
       return result
     },
+    time: function(tm) {
+      var createTime = new Date(tm).getTime()
+      var now = new Date().getTime()
+      var age = Math.floor((now - createTime) / 1000)
+      if (age < 60) {
+        return Math.floor(age) + 's'
+      } else if (age / 60 < 60) {
+        return Math.floor(age / 60) + 'm'
+      } else if (age / 60 / 60 < 24) {
+        return Math.floor(age / 60 / 60) + 'h'
+      } else {
+        return Math.floor(age / 60 / 60 / 24) + 'd'
+      }
+    },
+    close: function(formName) {
+      // debugger
+      this.$refs[formName].resetFields()
+    },
+    closed: function() {
+      this.textarea = ''
+    },
     // handlePageChange: function(page) {
     //   this.currentPage = page
     //   this.getAllServices()
@@ -319,5 +449,17 @@ export default {
   }
   .input-with-select .el-input-group__prepend {
     background-color: #fff;
+  }
+  .Show .el-tag{
+    font-size:15px;
+    border-radius: 20px;
+    margin-right: 15px;
+    margin-bottom: 10px;
+  }
+  .Show{
+  font-size:15px;
+  }
+  .el-header{
+    padding-bottom: 0%;
   }
 </style>

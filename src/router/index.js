@@ -100,19 +100,53 @@ export const constantRouterMap = [
         name: 'Service2',
         hidden: true,
         component: () => import('@/views/service/index2'),
-        meta: { title: '服务', icon: 'server' }
+        meta: { title: '详情', icon: 'server' }
       }
     ]
   },
   {
-    path: '/storage',
+    path: '/configAndSecret',
     component: Layout,
+    meta: { title: '配置与存储', icon: 'config' },
     children: [
+      {
+        path: 'config',
+        name: 'Config',
+        component: () => import('@/views/config/index1'),
+        meta: { title: '配置' }
+      },
+      {
+        path: 'config2/:name/:namespace',
+        name: 'Config2',
+        hidden: true,
+        component: () => import('@/views/config/index2'),
+        meta: { title: '详情' }
+      },
+      {
+        path: 'secret',
+        name: 'Secret',
+        component: () => import('@/views/secret/index1'),
+        meta: { title: '保密' }
+      },
+      {
+        path: 'secret2/:name/:namespace',
+        name: 'Secret2',
+        hidden: true,
+        component: () => import('@/views/secret/index2'),
+        meta: { title: '详情' }
+      },
       {
         path: 'storage',
         name: 'Storage',
-        component: () => import('@/views/storage/index'),
-        meta: { title: '存储', icon: 'storage' }
+        component: () => import('@/views/storage/index1'),
+        meta: { title: '存储' }
+      },
+      {
+        path: 'storage2/:name/:namespace',
+        name: 'Storage2',
+        hidden: true,
+        component: () => import('@/views/storage/index2'),
+        meta: { title: '详情' }
       }
     ]
   },
@@ -172,7 +206,6 @@ export const constantRouterMap = [
         meta: { title: '镜像仓库', icon: 'repositories' }
         // hidden: true
       }
-
     ]
   },
   {

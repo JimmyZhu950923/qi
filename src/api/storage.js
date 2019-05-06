@@ -23,11 +23,26 @@ export function addStorages(name) {
     params: { name: name }
   })
 }
+export function createYaml(storage1, namespace) {
+  return request({
+    url: 'http://127.0.0.1:8080/v1/storage/' + namespace,
+    method: 'post',
+    data: storage1
+  })
+}
 // 删
-export function remove(name, namespace) {
+export function remove(data) {
   return request({
     url: 'http://127.0.0.1:8080/v1/storage',
     method: 'delete',
-    params: { name: name, namespace: namespace }
+    params: data
+  })
+}
+// 更新
+export function update(name) {
+  return request({
+    url: 'http://127.0.0.1:8080/v1/storage',
+    method: 'put',
+    params: { name: name }
   })
 }
