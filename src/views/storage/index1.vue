@@ -42,10 +42,9 @@
             <el-select slot="prepend" v-model="namespace1" size="mini" placeholder="请选择" @change="getAllStorages()">
               <el-option
                 v-for="item in options4"
-                :key="item.metadata.name"
-                :label="item.metadata.name"
-                :value="item.metadata.name"
-              />
+                :key="item.Name"
+                :label="item.Name"
+                :value="item.Name"/>
             </el-select>
             <el-button slot="append" size="mini" icon="el-icon-search" @click="nameChange()"/>
           </el-input>
@@ -286,7 +285,7 @@ export default {
     selNameSpace: function() {
       getAllNamespace().then(response => {
         // debugger
-        this.options4 = response.data.items
+        this.options4 = response.data
       })
     },
     rr: function() {

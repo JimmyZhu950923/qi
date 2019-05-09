@@ -21,10 +21,9 @@
             <el-select slot="prepend" v-model="namespace" size="mini" placeholder="请选择" @change="getAllSecrets()">
               <el-option
                 v-for="item in options4"
-                :key="item.metadata.name"
-                :label="item.metadata.name"
-                :value="item.metadata.name"
-              />
+                :key="item.Name"
+                :label="item.Name"
+                :value="item.Name"/>
             </el-select>
             <el-button slot="append" size="mini" icon="el-icon-search" @click="nameChange()"/>
           </el-input>
@@ -257,7 +256,7 @@ export default {
       // debugger
       getAllNamespace().then(response => {
         // debugger
-        this.options4 = response.data.items
+        this.options4 = response.data
       })
     },
     closed: function() {

@@ -11,9 +11,9 @@
               <el-select v-model="selForm.namespace1">
                 <el-option
                   v-for="item in options4"
-                  :key="item.metadata.name"
-                  :label="item.metadata.name"
-                  :value="item.metadata.name"/>
+                  :key="item.Name"
+                  :label="item.Name"
+                  :value="item.Name"/>
               </el-select>
             </el-form-item>
             <el-form-item label="服务类型" prop="type">
@@ -57,10 +57,9 @@
               <el-select slot="prepend" v-model="namespace2" size="mini" placeholder="请选择" @change="getAllServices()">
                 <el-option
                   v-for="item in options4"
-                  :key="item.metadata.name"
-                  :label="item.metadata.name"
-                  :value="item.metadata.name"
-                />
+                  :key="item.Name"
+                  :label="item.Name"
+                  :value="item.Name"/>
               </el-select>
               <el-button slot="append" size="mini" icon="el-icon-search" @click="nameChange()"/>
             </el-input>
@@ -393,7 +392,7 @@ export default {
     selNameSpace: function() {
       getAllNamespace().then(response => {
         // debugger
-        this.options4 = response.data.items
+        this.options4 = response.data
       })
     },
     rr: function() {
