@@ -36,8 +36,9 @@
         </el-col>
         <el-col :span="4">
           <el-input
-            v-model="name2"
+            v-model="name"
             :clearable="true"
+            disabled
             size="mini"
             placeholder="过滤项目"
             prefix-icon="el-icon-search"
@@ -112,7 +113,6 @@ export default {
       sels: [],
       input: '',
       name: '',
-      name2: '',
       selForm: {
         author: '',
         created: '',
@@ -159,27 +159,11 @@ export default {
         // _this.countPage = response.result.length
       })
     },
-    select: function() {
-      // debugger
-      const _this = this
-      var projectId = this.$route.params.projectId
-      this.projectId = projectId
-      var repoName = this.$route.params.repoName
-      this.repoName = repoName
-      var data = {
-        name: this.name2,
-        repoName: repoName,
-        projectId: this.projectId
-      }
-      all(data).then(response => {
-        _this.tableData = response.result
-      })
-    },
     nameChange: function() {
       this.select()
     },
     handleSelectionChange: function(val) {
-      debugger
+      // debugger
       if (val != null) {
         this.sels = val
         console.log(this.sels)
