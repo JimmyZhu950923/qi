@@ -36,14 +36,13 @@
         </el-col>
         <el-col :span="4">
           <el-input
-            v-model="name"
-            disabled
-            clearable
+            v-model="name2"
+            :clearable="true"
             size="mini"
             placeholder="过滤项目"
             prefix-icon="el-icon-search"
             @keyup.native="nameChange"
-            @clear="selectFunc"
+            @clear="select"
           />
         </el-col>
         <el-col :span="1" style="margin-left:10px">
@@ -113,6 +112,7 @@ export default {
       sels: [],
       input: '',
       name: '',
+      name2: '',
       selForm: {
         author: '',
         created: '',
@@ -159,8 +159,24 @@ export default {
         // _this.countPage = response.result.length
       })
     },
-    namechange: function() {
-      this.selectFunc()
+    select: function() {
+      // debugger
+      const _this = this
+      var projectId = this.$route.params.projectId
+      this.projectId = projectId
+      var repoName = this.$route.params.repoName
+      this.repoName = repoName
+      var data = {
+        name: this.name2,
+        repoName: repoName,
+        projectId: this.projectId
+      }
+      all(data).then(response => {
+        _this.tableData = response.result
+      })
+    },
+    nameChange: function() {
+      this.select()
     },
     handleSelectionChange: function(val) {
       debugger
