@@ -76,11 +76,9 @@
     </el-dialog>
     <el-main>
       <el-row>
-        <el-col :span="2">
+        <el-col :span="15">
           <el-button type="primary" size="mini" round icon="el-icon-plus" @click="dialogVisible2 = true">新建</el-button>
-        </el-col>
-        <el-col :span="13">
-          <el-button type="primary" size="mini" round icon="el-icon-plus" @click="dialogVisible4 = true">从文本输入框创建</el-button>
+          <el-button type="primary" size="mini" round icon="el-icon-plus" @click="dialogVisible4 = true">从模板输入框新建</el-button>
         </el-col>
         <el-col :span="7">
           <el-input v-model="flag" size="mini" clearable placeholder="请输入负载名称" class="input-with-select" @clear="selectFunc">

@@ -14,7 +14,7 @@
       </el-dialog>
       <el-row>
         <el-col :span="15">
-          <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible2 = true">yaml新建</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-plus" round @click="dialogVisible2 = true">从模板输入框新建</el-button>
         </el-col>
         <el-col :span="7">
           <el-input v-model="name" :clearable="name !== null" size="mini" placeholder="请输入名称" class="input-with-select">

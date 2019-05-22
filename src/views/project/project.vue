@@ -24,7 +24,7 @@
       </span>
     </el-dialog>
     <el-row>
-      <el-col :span="13">
+      <el-col :span="15">
         <el-button
           icon="el-icon-plus"
           size="mini"
@@ -41,26 +41,17 @@
           @click="deleteFunc"
         >删除</el-button>
       </el-col>
-      <el-col :span="4">
-        <el-select v-model="plc" size="mini" placeholder="请选择" @change="selchangeFunc">
-          <el-option
-            v-for="item in options"
-            :key="item.value1"
-            :label="item.label"
-            :value="item.value1"
-          />
-        </el-select>
-      </el-col>
-      <el-col :span="4">
-        <el-input
-          v-model="name"
-          clearable
-          size="mini"
-          placeholder="过滤项目"
-          prefix-icon="el-icon-search"
-          @keyup.native="nameChange"
-          @clear="selectFunc"
-        />
+      <el-col :span="7">
+        <el-input v-model="name" clearable size="mini" placeholder="过滤项目" prefix-icon="el-icon-search" @keyup.native="nameChange" @clear="selectFunc">
+          <el-select slot="prepend" v-model="plc" size="mini" placeholder="请选择" @change="selchangeFunc">
+            <el-option
+              v-for="item in options"
+              :key="item.value1"
+              :label="item.label"
+              :value="item.value1"
+            />
+          </el-select>
+        </el-input>
       </el-col>
       <el-col :span="1" style="margin-left:10px">
         <el-button size="mini" icon="el-icon-refresh" circle @click="rr"/>

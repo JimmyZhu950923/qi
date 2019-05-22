@@ -4,8 +4,8 @@
       <el-main v-loading="loading">
         <el-row>
           <el-col :span="10">
-            <el-button type="success" round size="mini" icon="el-icon-plus" @click="addNew = true">新建</el-button>
-            <el-button type="primary" size="mini" round icon="el-icon-refresh" @click="getAllCluster">刷新</el-button>
+            <el-button type="primary" round size="mini" icon="el-icon-plus" @click="addNew = true">新建</el-button>
+            <el-button type="success" size="mini" round icon="el-icon-refresh" @click="getAllCluster">刷新</el-button>
           </el-col>
           <el-dialog
             :visible.sync="addNew"
