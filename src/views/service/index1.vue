@@ -169,6 +169,10 @@ export default {
       if (!value) {
         return callback(new Error('请输入名称'))
       }
+      var usern = /^[a-zA-Z0-9]{1,}$/
+      if (!value.match(usern)) {
+        return callback(new Error('服务名称只能由字母数字组成'))
+      }
       // debugger
       getSingle(this.selForm.namespace1, value).then(response => {
         // debugger
