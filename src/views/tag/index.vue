@@ -149,11 +149,7 @@ export default {
       const _this = this
       var repoName = this.$route.params.repoName
       this.repoName = repoName
-      var data = {
-        repoName: repoName,
-        name: _this.selForm.name
-      }
-      all(data).then(response => {
+      all(this.repoName).then(response => {
         _this.tableData = response.result
         console.log(_this.tableData)
         // _this.countPage = response.result.length
