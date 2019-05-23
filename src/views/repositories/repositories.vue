@@ -183,7 +183,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="description" label="描述" sortable/>
-                <el-table-column :default-sort = "{prop: 'creation_time', order: 'descending'}" prop="creation_time" label="创建时间" sortable/>
+                <el-table-column :default-sort = "{prop: 'creation_time', order: 'ascending'}" prop="creation_time" label="创建时间" sortable/>
               </el-table>
               <div class="block">
                 <el-pagination :total="total_label" layout="total"/>

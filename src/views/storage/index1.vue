@@ -68,7 +68,7 @@
         <el-table-column prop="parameters.adminSecretNamespace" label="管理者命名空间" sortable />
         <el-table-column prop="provisioner" label="类型" sortable />
         <el-table-column prop="parameters.userSecretNamespace" label="用户命名空间" sortable />
-        <el-table-column :default-sort = "{prop: 'metadata.creationTimestamp', order: 'descending'}" prop="metadata.creationTimestamp" label="存活时间" sortable width="100">
+        <el-table-column :default-sort = "{prop: 'metadata.creationTimestamp', order: 'ascending'}" prop="metadata.creationTimestamp" label="存活时间" sortable width="100">
           <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
         </el-table-column>
         <el-table-column label="操作" width="165">

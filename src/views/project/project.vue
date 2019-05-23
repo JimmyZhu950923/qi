@@ -79,7 +79,7 @@
       </el-table-column>
       <el-table-column sortable prop="repo_count" label="镜像仓库数" width="140"/>
       <el-table-column sortable prop="chart_count" label="Helm Chart 数目" width="160"/>
-      <el-table-column :default-sort = "{prop: 'creation_time', order: 'descending'}" sortable prop="creation_time" label="创建时间">
+      <el-table-column :default-sort = "{prop: 'creation_time', order: 'ascending'}" sortable prop="creation_time" label="创建时间">
         <template slot-scope="scope">{{ time(scope.row.creation_time) }}</template>
       </el-table-column>
       <el-table-column
