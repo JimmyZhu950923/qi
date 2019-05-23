@@ -100,7 +100,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :default-sort = "{prop: 'metadata.creationTimestamp', order: 'ascending'}" prop="metadata.creationTimestamp" label="存活时间" sortable>
+          <el-table-column :default-sort = "{prop: 'metadata.creationTimestamp', order: 'descending'}" prop="metadata.creationTimestamp" label="存活时间" sortable>
             <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
           </el-table-column>
           <el-table-column prop="metadata.namespace" label="命名空间" sortable/>
