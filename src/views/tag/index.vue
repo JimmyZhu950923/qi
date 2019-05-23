@@ -66,7 +66,7 @@
         </el-table-column>
         <el-table-column prop="digest" label="Pull命令" width="200" show-overflow-tooltip/>
         <el-table-column prop="author" label="作者" sortable width="200" show-overflow-tooltip/>
-        <el-table-column prop="created" label="创建时间" sortable width="155">
+        <el-table-column :default-sort = "{prop: 'created', order: 'descending'}" prop="created" label="创建时间" sortable width="155">
           <template slot-scope="t">{{ time(t.row.created) }}</template>
         </el-table-column>
         <el-table-column prop="docker_version" label="Docker版本"/>

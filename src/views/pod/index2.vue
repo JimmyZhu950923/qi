@@ -40,7 +40,7 @@
                   <font :color="checkStatusFunc(scope.row.status.phase)">{{ scope.row.status.phase }}</font>
                 </template>
               </el-table-column>
-              <el-table-column sortable prop="metadata.creationTimestamp" label="已创建">
+              <el-table-column :default-sort = "{prop: 'metadata.creationTimestamp', order: 'descending'}" sortable prop="metadata.creationTimestamp" label="已创建">
                 <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
               </el-table-column>
               <el-table-column sortable prop="status.containerStatuses[0].restartCount" label="重启次数"/>

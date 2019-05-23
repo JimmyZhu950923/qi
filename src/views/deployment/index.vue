@@ -116,7 +116,7 @@
         <el-table-column label="可用" prop="status.availableReplicas" sortable>
           <template slot-scope="scope">{{ scope.row.status.availableReplicas == undefined?0:scope.row.status.availableReplicas }}</template>
         </el-table-column>
-        <el-table-column prop="metadata.creationTimestamp" label="存活时间" sortable>
+        <el-table-column :default-sort = "{prop: 'metadata.creationTimestamp', order: 'descending'}" prop="metadata.creationTimestamp" label="存活时间" sortable>
           <template slot-scope="scope">{{ time(scope.row.metadata.creationTimestamp) }}</template>
         </el-table-column>
         <el-table-column label="命名空间" prop="metadata.namespace" sortable/>

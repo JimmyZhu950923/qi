@@ -57,7 +57,7 @@
           </el-table-column>
           <el-table-column prop="DisplayName" label="DisplayName" />
           <el-table-column prop="Namespace" label="Namespace"/>
-          <el-table-column sortable prop="CreateDate" label="CreateDate">
+          <el-table-column :default-sort = "{prop: 'CreateDate', order: 'descending'}" sortable prop="CreateDate" label="CreateDate">
             <template slot-scope="scope">{{ time(scope.row.CreateDate) }}</template>
           </el-table-column>
           <el-table-column prop="ApiService" label="ApiService"/>
