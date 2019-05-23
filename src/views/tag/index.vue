@@ -1,6 +1,7 @@
 <template>
   <el-form>
-    <el-header style="margin-top: 25px;">
+    <!-- <el-header style="margin-top: 25px;"> -->
+    <el-main>
       <el-row>
         <el-col :span="18">
           <el-dropdown @command="addAndRemove">
@@ -87,6 +88,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="block">
+        <el-pagination :total="countPage" layout="total"/>
+      </div>
       <!-- <el-pagination
         :current-page="currentPage"
         :total="countPage"
@@ -94,7 +98,8 @@
         layout="total,prev,pager,next"
         @current-change="handlePageChange"
       /> -->
-    </el-header>
+    <!-- </el-header> -->
+    </el-main>
   </el-form>
 </template>
 
@@ -127,7 +132,7 @@ export default {
       stripe: true,
       // pageSize: 5,
       // currentPage: 1,
-      // countPage: 0,
+      countPage: 0,
       repoName: ''
     }
   },
@@ -152,7 +157,7 @@ export default {
       all(this.repoName).then(response => {
         _this.tableData = response.result
         console.log(_this.tableData)
-        // _this.countPage = response.result.length
+        _this.countPage = response.result.length
       })
     },
     nameChange: function() {

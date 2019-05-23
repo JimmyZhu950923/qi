@@ -140,6 +140,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="block">
+        <el-pagination :total="countPage" layout="total"/>
+      </div>
     </el-main>
 
     <el-dialog
@@ -217,7 +220,8 @@ export default {
       flag: '',
       select: 'default',
       daemonsetSTR: '',
-      daemonsetSTR1: ''
+      daemonsetSTR1: '',
+      countPage: 0
     }
   },
   created() {
@@ -232,6 +236,7 @@ export default {
       list({ namespace: namespace }).then(response => {
         this.loading = false
         this.daemonset = response.data.items
+        this.countPage = response.data.items.length
       })
     },
     time: function(tm) {

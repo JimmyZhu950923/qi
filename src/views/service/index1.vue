@@ -121,6 +121,9 @@
             </template>
           </el-table-column>
         </el-table>
+        <div class="block">
+          <el-pagination :total="countPage" layout="total"/>
+        </div>
         <!-- <el-pagination
           :current-page="currentPage"
           :total="countPage"
@@ -217,7 +220,7 @@ export default {
       value: '',
       // pageSize: 20,
       // currentPage: 1,
-      // countPage: 0,
+      countPage: 0,
       rules: {
         name: [
           { required: true, validator: checkName, trigger: 'blur' }

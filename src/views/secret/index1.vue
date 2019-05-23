@@ -73,6 +73,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="block">
+        <el-pagination :total="countPage" layout="total"/>
+      </div>
       <!-- <el-pagination
         :current-page="currentPage"
         :total="countPage"
@@ -115,10 +118,10 @@ export default {
       namespace: 'default',
       tableData: [],
       selection: true,
-      stripe: true
+      stripe: true,
       // pageSize: 20,
       // currentPage: 1,
-      // countPage: 0
+      countPage: 0
     }
   },
   created() {

@@ -138,6 +138,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="block">
+        <el-pagination :total="countPage" layout="total"/>
+      </div>
     </el-main>
 
     <el-dialog :visible.sync="dialogVisible1" :title="currentRow.metadata.name" width="30%">
@@ -227,7 +230,8 @@ export default {
       namespace2: 'default',
       namespace1: '',
       flag: '',
-      select: 'default'
+      select: 'default',
+      countPage: 0
     }
   },
   created() {
@@ -242,6 +246,7 @@ export default {
       list({ namespace: namespace }).then(response => {
         this.loading = false
         this.deployment = response.data.items
+        this.countPage = response.data.items.length
       })
     },
     time: function(tm) {
